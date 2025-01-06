@@ -7,7 +7,7 @@ export class RequestError extends Error {
     message: string,
     errors?: Record<string, string[]>
   ) {
-    super(message);
+    super(message); // Super calls the parent class and passes the message to the parent Error class
     this.statusCode = statusCode;
     this.errors = errors;
     this.name = 'RequestError';
@@ -58,3 +58,5 @@ export class UnauthorizedError extends RequestError {
     this.name = 'UnauthorizedError';
   }
 }
+
+
