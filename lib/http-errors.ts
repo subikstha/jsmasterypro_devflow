@@ -1,3 +1,4 @@
+// We use classes here to better organize our error types
 export class RequestError extends Error {
   statusCode: number;
   errors?: Record<string, string[]>;
