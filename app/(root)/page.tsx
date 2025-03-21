@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import QuestionCard from '@/components/cards/QuestionCard';
 import HomeFilter from '@/components/filters/HomeFilter';
 import LocalSearch from '@/components/search/LocalSearch';
+import TestSignOut from '@/components/TestSignOut';
 import { Button } from '@/components/ui/button';
 import ROUTES from '@/constants/routes';
 
@@ -73,6 +74,7 @@ const Home = async ({ searchParams }: SearchParams) => {
         <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
           <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
         </Button>
+        {session && <TestSignOut />}
       </section>
       <section className="mt-11">
         <LocalSearch
