@@ -43,9 +43,8 @@ async function action<T>({
     if (!session) {
       return new UnauthorizedError();
     }
-
-    await dbConnect();
   }
+  await dbConnect();
   return { params, session };
 }
 
