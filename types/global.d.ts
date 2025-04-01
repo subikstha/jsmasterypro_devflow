@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 interface Tag {
   _id: string;
   name: string;
@@ -20,11 +22,12 @@ interface Question {
   views: number;
 }
 
-// 
+//
 type ActionResponse<T = null> = {
   success: boolean;
   data?: T; // Data is whatever we pass as parameter to the ActionResponse
-  error?: { // If there is no data then we must have an error
+  error?: {
+    // If there is no data then we must have an error
     message: string;
     details?: Record<string, string[]>;
   };
@@ -36,3 +39,7 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+interface RouteParams{
+  params: Promise<Record<string, string>>; // This Record<string,string> is a utility type that defines an object structure where each property is a key value pair both of which are strings
+  searchParams: Promise<Record<string, string>>;
+}
