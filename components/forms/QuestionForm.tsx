@@ -20,15 +20,21 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import { createQuestion } from '@/lib/actions/question.action';
+import { createQuestion, editQuestion } from '@/lib/actions/question.action';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import ROUTES from '@/constants/routes';
 import { ReloadIcon } from '@radix-ui/react-icons';
+import { Question } from '@/types/global';
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false });
 
-const QuestionForm = () => {
+interface Props {
+  question?: Question;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Props) => {
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
@@ -36,9 +42,9 @@ const QuestionForm = () => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: '',
-      content: '',
-      tags: [],
+      title: question?.title || '',
+      content: question?.content || '',
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -94,6 +100,29 @@ const QuestionForm = () => {
     data: z.infer<typeof AskQuestionSchema>
   ) => {
     startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question._id,
+          ...data,
+        });
+
+        if (result.success) {
+          toast({
+            title: 'Success',
+            description: 'Question updated successfully',
+          });
+
+          if (result.data) router.push(ROUTES.QUESTION(result?.data?._id));
+        } else {
+          toast({
+            title: `Error ${result.status}`,
+            description: result?.error?.message || 'Something went wrong',
+            variant: 'destructive',
+          });
+        }
+
+        return;
+      }
       const result = await createQuestion(data);
 
       if (result.success) {
@@ -217,7 +246,7 @@ const QuestionForm = () => {
             {isPending ? (
               <ReloadIcon className="mr-2 size-4 animate-spin" />
             ) : (
-              <>Ask A Question</>
+              <>{isEdit ? 'Edit' : 'Ask A Question'}</>
             )}
           </Button>
         </div>

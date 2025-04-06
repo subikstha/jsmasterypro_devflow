@@ -14,6 +14,7 @@ interface Author {
 interface Question {
   _id: string;
   title: string;
+  content: string;
   tags: Tag[];
   author: Author;
   createdAt: Date;
@@ -39,7 +40,8 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 
 type APIErrorResponse = NextResponse<ErrorResponse>;
 type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
-interface RouteParams{
+
+interface RouteParams {
   params: Promise<Record<string, string>>; // This Record<string,string> is a utility type that defines an object structure where each property is a key value pair both of which are strings
   searchParams: Promise<Record<string, string>>;
 }
