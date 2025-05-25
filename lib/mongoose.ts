@@ -8,7 +8,7 @@ if (!MONGODB_URI) {
   throw new Error('MONGODB_URI is not defined');
 }
 
-// We want to cache the connection so as to connect on every server action
+// We want to cache the connection so as to connect on every server action since server actions donot remember mongodb connections
 
 interface MongooseCache {
   conn: Mongoose | null;

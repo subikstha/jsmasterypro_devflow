@@ -1,5 +1,5 @@
 'use server';
-import mongoose from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 
 import action from '../handlers/action';
 import handleError from '../handlers/error';
@@ -7,11 +7,17 @@ import {
   AskQuestionSchema,
   EditQUestionSchema,
   GetQuestionSchema,
+  PaginatedSearchParamsSchema,
 } from '../validations';
 import Tag, { ITagDoc } from '@/database/tag.model';
 import TagQuestion from '@/database/tag-question.model';
-import { ActionResponse, ErrorResponse } from '@/types/global';
+import {
+  ActionResponse,
+  ErrorResponse,
+  PaginatedSearchParams,
+} from '@/types/global';
 import Question from '@/database/question.model';
+// import User from '@/database/user.model';
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -199,6 +205,82 @@ export async function getQuestion(
     if (!question) throw new Error('Question not found');
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getQuestions(
+  params: PaginatedSearchParams
+): Promise<
+  ActionResponse<{ questions: (typeof Question)[]; isNext: boolean }>
+> {
+  const validationResult = await action({
+    params,
+    schema: PaginatedSearchParamsSchema,
+  });
+
+  console.log('Validation result is', validationResult);
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, query, filter } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = Number(pageSize);
+
+  const filterQuery: FilterQuery<typeof Question> = {};
+
+  // TODO: Recommended questions to be done later
+  if (filter === 'recommended') {
+    return { success: true, data: { questions: [], isNext: false } };
+  }
+
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: new RegExp(query, 'i') } },
+      { content: { $regex: new RegExp(query, 'i') } },
+    ];
+  }
+
+  let sortCriteria = {};
+
+  switch (filter) {
+    case 'newest':
+      sortCriteria = { createdAt: -1 };
+      break;
+    case 'unanswered':
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+    case 'popular':
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+
+  try {
+    const totalQuestions = await Question.countDocuments(filterQuery);
+    console.log('Total questions are', totalQuestions);
+    // const questions = await Question.find();
+    const questions = await Question.find(filterQuery)
+      .populate('tags', 'name') // Populate the tags field with the name of the tag
+      .populate('author', 'name image') // Populate the author field with the name and image of the author
+      .lean() // Convert Mongoose documents to plain JavaScript objects
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+    // console.log('Questions in server actions are', questions);
+    const isNext = totalQuestions > skip + questions.length;
+
+    return {
+      success: true,
+      data: { questions: JSON.parse(JSON.stringify(questions)), isNext }, // The reason for using JSON.parse and JSON.stringify is to ensure compatibility with Next.js server actions to account for passing large payloads through server actions because some times it may not work as expected
+    };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

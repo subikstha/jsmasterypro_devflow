@@ -8,6 +8,7 @@ import { IAccountDoc } from './database/account.model';
 import { IUserDoc } from './database/user.model';
 import { api } from './lib/api';
 import { SignInSchema } from './lib/validations';
+import { ActionResponse } from './types/global';
 
 // We will check if the sign-in account type is credentials; if yes, then we skip. We'll handle it the other way around when doing email password based authentication
 
@@ -58,6 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async session({ session, token }) {
       session.user.id = token.sub as string;
+      // session.token = token;
       return session;
     },
     async jwt({ token, account }) {
@@ -76,6 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (userId) token.sub = userId.toString();
       }
 
+      // console.log('token and accounts are', token, account?.access_token);
       return token;
     },
     async signIn({ user, profile, account }) {

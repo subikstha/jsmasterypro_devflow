@@ -45,3 +45,11 @@ interface RouteParams {
   params: Promise<Record<string, string>>; // This Record<string,string> is a utility type that defines an object structure where each property is a key value pair both of which are strings
   searchParams: Promise<Record<string, string>>;
 }
+
+interface PaginatedSearchParams {
+  page?: number;
+  pageSize?: number;
+  query?: string;
+  filter?: string;
+  sort?: string;
+}

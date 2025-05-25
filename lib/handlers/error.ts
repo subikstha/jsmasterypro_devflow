@@ -27,6 +27,7 @@ const formatResponse = (
 
 const handleError = (error: unknown, responseType: ResponseType = 'server') => {
   if (error instanceof RequestError) {
+    console.log('request error');
     logger.error(
       { err: error },
       `${responseType.toUpperCase()} Error: ${error.message}`
@@ -40,6 +41,7 @@ const handleError = (error: unknown, responseType: ResponseType = 'server') => {
   }
 
   if (error instanceof ZodError) {
+    console.log('zod error');
     const validationError = new ValidationError(
       error.flatten().fieldErrors as Record<string, string[]>
     );
@@ -58,6 +60,7 @@ const handleError = (error: unknown, responseType: ResponseType = 'server') => {
   }
 
   if (error instanceof Error) {
+    console.log('just error');
     logger.error(error.message);
     return formatResponse(responseType, 500, error.message);
   }

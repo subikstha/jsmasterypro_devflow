@@ -1,11 +1,12 @@
-import Link from 'next/link';
-
+import { Button } from '@/components/ui/button';
 import QuestionCard from '@/components/cards/QuestionCard';
 import HomeFilter from '@/components/filters/HomeFilter';
 import LocalSearch from '@/components/search/LocalSearch';
-import { Button } from '@/components/ui/button';
 import ROUTES from '@/constants/routes';
 
+import Link from 'next/link';
+import { auth } from '@/auth';
+import { getQuestions } from '@/lib/actions/question.action';
 const questions = [
   {
     _id: '1',
@@ -52,20 +53,34 @@ interface SearchParams {
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
-  const { query = '', filter = '' } = await searchParams;
+  const session = await auth();
 
-  const filteredQuestions = questions.filter((question) => {
-    const matchesQuery = question.title
-      .toLowerCase()
-      .includes(query.toLowerCase());
-    const matchesFilter = filter
-      ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
-      : true;
-    return matchesQuery && matchesFilter;
+  const { page, pageSize, query, filter } = await searchParams;
+
+  const { success, data, error } = await getQuestions({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    query: query || '',
+    filter: filter || '',
   });
+
+  console.log('Questions are', data, success, error);
+
+  const { questions } = data || {};
+  console.log('Session is', session);
+
+  // const filteredQuestions = questions.filter((question) => {
+  //   const matchesQuery = question.title
+  //     .toLowerCase()
+  //     .includes(query.toLowerCase());
+  //   const matchesFilter = filter
+  //     ? question.tags[0].name.toLowerCase() === filter.toLowerCase()
+  //     : true;
+  //   return matchesQuery && matchesFilter;
+  // });
   return (
     <>
-      <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+      <section className=" w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center flex">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
           <Link href={ROUTES.ASK_QUESTION}>Ask a Question</Link>
@@ -81,9 +96,15 @@ const Home = async ({ searchParams }: SearchParams) => {
       </section>
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
-        {filteredQuestions.map((question) => (
-          <QuestionCard key={question._id} question={question} />
-        ))}
+        {questions && questions.length > 0 ? (
+          questions.map((question) => (
+            <QuestionCard key={question._id} question={question} />
+          ))
+        ) : (
+          <div className="mt-10 flex w-full items-center justify-center">
+            <p className="text-dark400_light700">No Questions Found</p>
+          </div>
+        )}
       </div>
     </>
   );
