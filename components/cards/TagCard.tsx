@@ -28,7 +28,6 @@ const TagCard = ({
   isButton,
   handleRemove,
 }: Props) => {
-  console.log('calling devicon class name', name);
   const iconClass = getDeviconClassName(name);
 
   const content = (
