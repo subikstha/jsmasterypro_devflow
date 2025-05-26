@@ -5,6 +5,8 @@ import HomeFilter from '@/components/filters/HomeFilter';
 import LocalSearch from '@/components/search/LocalSearch';
 import { Button } from '@/components/ui/button';
 import ROUTES from '@/constants/routes';
+import { RequestError } from '@/lib/http-errors';
+import { NextResponse } from 'next/server';
 
 const questions = [
   {
@@ -52,6 +54,22 @@ interface SearchParams {
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
+  try {
+    const error = new RequestError(400, 'Resource Not Found', {
+      email: ['Email is required', 'Email must be valid'],
+      password: ['Password must be at least 8 characters'],
+    });
+
+    throw error;
+  } catch (err) {
+    if (err instanceof RequestError) {
+      return NextResponse.json(
+        { message: err.message, errors: err.errors },
+        { status: err.statusCode }
+      );
+    }
+    console.error('This is the error', err);
+  }
   const { query = '', filter = '' } = await searchParams;
 
   const filteredQuestions = questions.filter((question) => {

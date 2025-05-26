@@ -1,10 +1,13 @@
-'use client'
-import React from 'react'
+'use client';
+import { RequestError } from '@/lib/http-errors';
+import React from 'react';
 
-const Error = () => {
-  return (
-    <div>Something went wrong</div>
-  )
-}
+const Error = ({ error, reset }: { error: Error; reset: () => void }) => {
+  if (error instanceof RequestError) {
+    return <div>Error Code: {error.statusCode}</div>;
+  }
 
-export default Error
+  return <div>Something went wrong {}</div>;
+};
+
+export default Error;
