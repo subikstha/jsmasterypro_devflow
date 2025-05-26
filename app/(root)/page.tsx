@@ -7,6 +7,8 @@ import ROUTES from '@/constants/routes';
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { getQuestions } from '@/lib/actions/question.action';
+import DataRenderer from '@/components/DataRenderer';
+import { EMPTY_QUESTION } from '@/constants/states';
 const questions = [
   {
     _id: '1',
@@ -95,7 +97,20 @@ const Home = async ({ searchParams }: SearchParams) => {
         />
       </section>
       <HomeFilter />
-      {success ? (
+      <DataRenderer
+        success={success}
+        error={error}
+        data={questions}
+        empty={EMPTY_QUESTION}
+        render={(questions) => (
+          <div className="mt-10 flex w-full flex-col gap-6">
+            {questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))}
+          </div>
+        )}
+      />
+      {/* {success ? (
         <div className="mt-10 flex w-full flex-col gap-6">
           {questions && questions.length > 0 ? (
             questions.map((question) => (
@@ -113,7 +128,7 @@ const Home = async ({ searchParams }: SearchParams) => {
             {error?.message || 'Failed to fetch questions'}
           </p>
         </div>
-      )}
+      )} */}
     </>
   );
 };
