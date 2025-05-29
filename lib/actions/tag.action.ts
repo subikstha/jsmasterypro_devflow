@@ -60,6 +60,8 @@ export const getTags = async (
       .skip(skip)
       .limit(limit);
 
+    console.log('tags in get tags action', tags);
+
     const isNext = totalTags > skip + tags.length;
     return {
       success: true,
