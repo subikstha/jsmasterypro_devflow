@@ -11,11 +11,7 @@ import {
 } from '../validations';
 import Tag, { ITagDoc } from '@/database/tag.model';
 import TagQuestion from '@/database/tag-question.model';
-import {
-  ActionResponse,
-  ErrorResponse,
-  PaginatedSearchParams,
-} from '@/types/global';
+
 import Question, { IQuestionDoc } from '@/database/question.model';
 // import User from '@/database/user.model';
 

@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 interface Tag {
   _id: string;
   name: string;
@@ -53,3 +51,5 @@ interface PaginatedSearchParams {
   filter?: string;
   sort?: string;
 }
+
+// NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
