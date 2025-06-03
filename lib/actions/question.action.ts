@@ -1,6 +1,10 @@
 'use server';
 import mongoose, { FilterQuery } from 'mongoose';
 
+import Question, { IQuestionDoc } from '@/database/question.model';
+import TagQuestion from '@/database/tag-question.model';
+import Tag, { ITagDoc } from '@/database/tag.model';
+
 import action from '../handlers/action';
 import handleError from '../handlers/error';
 import {
@@ -10,10 +14,6 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
-import Tag, { ITagDoc } from '@/database/tag.model';
-import TagQuestion from '@/database/tag-question.model';
-
-import Question, { IQuestionDoc } from '@/database/question.model';
 // import User from '@/database/user.model';
 
 export async function createQuestion(
