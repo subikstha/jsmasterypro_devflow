@@ -1,7 +1,8 @@
-import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+
+import { cn } from '@/lib/utils';
 
 interface Props {
   imgUrl: string;
@@ -29,7 +30,7 @@ const Metric = ({
   const metricContent = (
     <>
       <Image
-      src={imgUrl}
+        src={imgUrl}
         width={16}
         height={16}
         alt={alt}
