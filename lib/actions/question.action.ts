@@ -7,12 +7,15 @@ import {
   AskQuestionSchema,
   EditQUestionSchema,
   GetQuestionSchema,
+  IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
 import Tag, { ITagDoc } from '@/database/tag.model';
 import TagQuestion from '@/database/tag-question.model';
 
 import Question, { IQuestionDoc } from '@/database/question.model';
+import { revalidatePath } from 'next/cache';
+import ROUTES from '@/constants/routes';
 // import User from '@/database/user.model';
 
 export async function createQuestion(
@@ -285,6 +288,37 @@ export async function getQuestions(
       success: true,
       data: { questions: JSON.parse(JSON.stringify(questions)), isNext }, // The reason for using JSON.parse and JSON.stringify is to ensure compatibility with Next.js server actions to account for passing large payloads through server actions because some times it may not work as expected
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function incrementViews(
+  params: IncrementViewsParams
+): Promise<ActionResponse<{ views: number }>> {
+  const validationResult = await action({
+    params,
+    schema: IncrementViewsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = validationResult.params!;
+  console.log('question id in action', questionId);
+
+  try {
+    const question = await Question.findById(questionId);
+
+    if (!question) throw new Error('Question not found');
+
+    question.views += 1;
+
+    await question.save();
+    revalidatePath(ROUTES.QUESTION(questionId));
+
+    return { success: true, data: { views: question.views } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
