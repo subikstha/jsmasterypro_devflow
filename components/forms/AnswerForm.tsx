@@ -4,18 +4,21 @@ import { MDXEditorMethods } from '@mdxeditor/editor';
 import { ReloadIcon } from '@radix-ui/react-icons';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
+import { toast } from '@/hooks/use-toast';
+import { createAnswer } from '@/lib/actions/answer.action';
 import { AnswerSchema } from '@/lib/validations';
 
 import { Button } from '../ui/button';
-import { Form, FormControl, FormField, FormItem } from '../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '../ui/form';
 
 const Editor = dynamic(() => import('@/components/editor'), { ssr: false });
 
-const AnswerForm = () => {
+const AnswerForm = ({ questionId }: { questionId: string }) => {
+  const [isAnswering, startAnsweringTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAISubmitting, setIsAISubmitting] = useState(false);
 
@@ -28,7 +31,27 @@ const AnswerForm = () => {
   });
 
   const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
-    console.log('values', values);
+    startAnsweringTransition(async () => {
+      const result = await createAnswer({
+        questionId,
+        content: values.content,
+      });
+
+      if (result.success) {
+        form.reset();
+
+        toast({
+          title: 'Success',
+          description: 'Your answer has been posted succesfully',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: result.error?.message,
+          variant: 'destructive',
+        });
+      }
+    });
   };
   return (
     <div>
@@ -67,7 +90,11 @@ const AnswerForm = () => {
             name="content"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-3">
-                <FormControl className="mt-3.5">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Your answer to the problem{' '}
+                  <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
                   <Editor
                     value={field.value}
                     editorRef={editorRef}

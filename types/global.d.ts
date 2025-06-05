@@ -52,4 +52,11 @@ interface PaginatedSearchParams {
   sort?: string;
 }
 
+interface Answer {
+  _id: string;
+  author: Author;
+  content: string;
+  createdAt: Date;
+}
+
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
