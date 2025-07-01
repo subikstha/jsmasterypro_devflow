@@ -87,7 +87,7 @@ export async function getAnswers(
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize;
 
-  const sortCriteria = {};
+  let sortCriteria = {};
 
   switch (filter) {
     case 'latest':
