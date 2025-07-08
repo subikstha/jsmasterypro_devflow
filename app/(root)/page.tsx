@@ -7,6 +7,8 @@ import ROUTES from '@/constants/routes';
 import Link from 'next/link';
 import { auth } from '@/auth';
 import { getQuestions } from '@/lib/actions/question.action';
+import DataRenderer from '@/components/DataRenderer';
+import { EMPTY_QUESTION } from '@/constants/states';
 const questions = [
   {
     _id: '1',
@@ -58,7 +60,7 @@ const Home = async ({ searchParams }: SearchParams) => {
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getQuestions({
-    page: Number(page) || 1,
+    page: Number(page) || 1, // Convert to number because searchParams are strings
     pageSize: Number(pageSize) || 10,
     query: query || '',
     filter: filter || '',
@@ -95,17 +97,38 @@ const Home = async ({ searchParams }: SearchParams) => {
         />
       </section>
       <HomeFilter />
-      <div className="mt-10 flex w-full flex-col gap-6">
-        {questions && questions.length > 0 ? (
-          questions.map((question) => (
-            <QuestionCard key={question._id} question={question} />
-          ))
-        ) : (
-          <div className="mt-10 flex w-full items-center justify-center">
-            <p className="text-dark400_light700">No Questions Found</p>
+      <DataRenderer
+        success={success}
+        error={error}
+        data={questions}
+        empty={EMPTY_QUESTION}
+        render={(questions) => (
+          <div className="mt-10 flex w-full flex-col gap-6">
+            {questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))}
           </div>
         )}
-      </div>
+      />
+      {/* {success ? (
+        <div className="mt-10 flex w-full flex-col gap-6">
+          {questions && questions.length > 0 ? (
+            questions.map((question) => (
+              <QuestionCard key={question._id} question={question} />
+            ))
+          ) : (
+            <div className="mt-10 flex w-full items-center justify-center">
+              <p className="text-dark400_light700">No Questions Found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-10 flex w-full items-center justify-center">
+          <p className="text-dark400_light700">
+            {error?.message || 'Failed to fetch questions'}
+          </p>
+        </div>
+      )} */}
     </>
   );
 };

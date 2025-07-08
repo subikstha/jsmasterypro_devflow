@@ -1,22 +1,19 @@
 'use server';
 import mongoose, { FilterQuery } from 'mongoose';
 
+import Question, { IQuestionDoc } from '@/database/question.model';
+import TagQuestion from '@/database/tag-question.model';
+import Tag, { ITagDoc } from '@/database/tag.model';
+
 import action from '../handlers/action';
 import handleError from '../handlers/error';
 import {
   AskQuestionSchema,
   EditQUestionSchema,
   GetQuestionSchema,
+  IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
-import Tag, { ITagDoc } from '@/database/tag.model';
-import TagQuestion from '@/database/tag-question.model';
-import {
-  ActionResponse,
-  ErrorResponse,
-  PaginatedSearchParams,
-} from '@/types/global';
-import Question from '@/database/question.model';
 // import User from '@/database/user.model';
 
 export async function createQuestion(
@@ -90,7 +87,7 @@ export async function createQuestion(
 
 export async function editQuestion(
   params: EditQuestionParams
-): Promise<ActionResponse<Question>> {
+): Promise<ActionResponse<IQuestionDoc>> {
   const validationResult = await action({
     params,
     schema: EditQUestionSchema,
@@ -109,6 +106,7 @@ export async function editQuestion(
 
   try {
     const question = await Question.findById(questionId).populate('tags'); // populate specifies paths which should be populated with other documents
+    console.log('Question in editQuestion is', question);
     if (!question) throw new Error('Question not found');
     if (question.author.toString() !== userId) {
       throw new Error('Unauthorized');
@@ -119,9 +117,13 @@ export async function editQuestion(
       question.content = content;
       await question.save({ session });
     }
-
+    console.log('Tags are', tags);
+    console.log('Question tags are', question.tags);
     const tagsToAdd = tags.filter(
-      (tag) => !question.tags.includes(tag.toLowerCase())
+      (tag) =>
+        !question.tags.some((t: ITagDoc) =>
+          t.name.toLowerCase().includes(tag.toLowerCase())
+        )
     );
 
     const tagsToRemove = question.tags.filter(
@@ -133,7 +135,7 @@ export async function editQuestion(
     if (tagsToAdd.length > 0) {
       for (const tag of tagsToAdd) {
         const existingTag = await Tag.findOneAndUpdate(
-          { name: { $regex: new RegExp(`^${tag}$`, 'i') } },
+          { name: { $regex: `^${tag}$`, $options: 'i' } },
           { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
           { upsert: true, new: true, session }
         );
@@ -164,7 +166,10 @@ export async function editQuestion(
       );
 
       question.tags = question.tags.filter(
-        (tagId: mongoose.Types.ObjectId) => !tagIdsToRemove.includes(tagId)
+        (tag: mongoose.Types.ObjectId) =>
+          !tagIdsToRemove.some((id: mongoose.Types.ObjectId) =>
+            id.equals(tag._id)
+          )
       );
     }
 
@@ -201,7 +206,9 @@ export async function getQuestion(
   const { questionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate('tags');
+    const question = await Question.findById(questionId)
+      .populate('tags')
+      .populate('author', '_id name image');
     if (!question) throw new Error('Question not found');
 
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
@@ -212,9 +219,7 @@ export async function getQuestion(
 
 export async function getQuestions(
   params: PaginatedSearchParams
-): Promise<
-  ActionResponse<{ questions: (typeof Question)[]; isNext: boolean }>
-> {
+): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,
@@ -281,6 +286,36 @@ export async function getQuestions(
       success: true,
       data: { questions: JSON.parse(JSON.stringify(questions)), isNext }, // The reason for using JSON.parse and JSON.stringify is to ensure compatibility with Next.js server actions to account for passing large payloads through server actions because some times it may not work as expected
     };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function incrementViews(
+  params: IncrementViewsParams
+): Promise<ActionResponse<{ views: number }>> {
+  const validationResult = await action({
+    params,
+    schema: IncrementViewsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = validationResult.params!;
+  console.log('question id in action', questionId);
+
+  try {
+    const question = await Question.findById(questionId);
+
+    if (!question) throw new Error('Question not found');
+
+    question.views += 1;
+
+    await question.save();
+
+    return { success: true, data: { views: question.views } };
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }

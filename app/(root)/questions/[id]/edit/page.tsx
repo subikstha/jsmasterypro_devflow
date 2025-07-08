@@ -1,11 +1,10 @@
+import { notFound, redirect } from 'next/navigation';
 import React from 'react';
 
-import QuestionForm from '@/components/forms/QuestionForm';
 import { auth } from '@/auth';
-import { notFound, redirect } from 'next/navigation';
-import { RouteParams } from '@/types/global';
-import { getQuestion } from '@/lib/actions/question.action';
+import QuestionForm from '@/components/forms/QuestionForm';
 import ROUTES from '@/constants/routes';
+import { getQuestion } from '@/lib/actions/question.action';
 
 const EditQuestion = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -21,7 +20,7 @@ const EditQuestion = async ({ params }: RouteParams) => {
     redirect(ROUTES.QUESTION(id)); // If the user is not the author of the question, redirect to the question page
   return (
     <main>
-        <QuestionForm question={question} isEdit/>
+      <QuestionForm question={question} isEdit />
     </main>
   );
 };
