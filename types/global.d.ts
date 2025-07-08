@@ -62,4 +62,16 @@ interface Answer {
   createdAt: Date;
 }
 
+interface User {
+  _id: string;
+  name: string;
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
+  location?: string;
+  portfolio?: string;
+  reputation?: number;
+}
+
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
