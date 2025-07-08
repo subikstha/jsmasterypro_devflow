@@ -30,6 +30,12 @@ const Votes = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const { hasUpvoted, hasDownvoted } = data || {};
+  console.log(
+    'success, hasUpvoted, hasDownvoted',
+    success,
+    hasUpvoted,
+    hasDownvoted
+  );
 
   const handleVote = async (voteType: 'upvote' | 'downvote') => {
     if (!userId)

@@ -161,12 +161,12 @@ export async function hasVoted(
 
     if (!vote)
       return {
-        success: false,
+        success: true,
         data: { hasUpvoted: false, hasDownvoted: false },
       };
 
     return {
-      success: false,
+      success: true,
       data: {
         hasUpvoted: vote.voteType === 'upvote',
         hasDownvoted: vote.voteType === 'downvote',
