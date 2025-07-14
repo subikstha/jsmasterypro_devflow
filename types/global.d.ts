@@ -74,4 +74,10 @@ interface User {
   reputation?: number;
 }
 
+interface Collection {
+  _id: string;
+  author: string | Author;
+  question: Question;
+}
+
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
