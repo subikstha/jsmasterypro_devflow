@@ -8,7 +8,6 @@ import { IAccountDoc } from './database/account.model';
 import { IUserDoc } from './database/user.model';
 import { api } from './lib/api';
 import { SignInSchema } from './lib/validations';
-import { ActionResponse } from './types/global';
 
 // We will check if the sign-in account type is credentials; if yes, then we skip. We'll handle it the other way around when doing email password based authentication
 
