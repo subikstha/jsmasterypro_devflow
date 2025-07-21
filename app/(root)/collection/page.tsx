@@ -3,7 +3,6 @@ import QuestionCard from '@/components/cards/QuestionCard';
 import DataRenderer from '@/components/DataRenderer';
 import HomeFilter from '@/components/filters/HomeFilter';
 import LocalSearch from '@/components/search/LocalSearch';
-import ROUTES from '@/constants/routes';
 import { EMPTY_QUESTION } from '@/constants/states';
 import { getSavedQuestions } from '@/lib/actions/collection.action';
 
@@ -12,8 +11,6 @@ interface SearchParams {
 }
 
 const Collection = async ({ searchParams }: SearchParams) => {
-  const session = await auth();
-
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getSavedQuestions({
