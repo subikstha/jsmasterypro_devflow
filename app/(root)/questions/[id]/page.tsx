@@ -17,8 +17,10 @@ import { getQuestion, incrementViews } from '@/lib/actions/question.action';
 import { hasVoted } from '@/lib/actions/vote.action';
 import { formatNumber, getTimeStamp } from '@/lib/utils';
 
-const QuestionDetails = async ({ params }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
+
+  const { page, pageSize, filter } = await searchParams;
 
   // NOTE: We can only do parallel requests like below if one request does not depend on another
   const [, { success, data: question }] = await Promise.all([
@@ -34,9 +36,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    page: 1,
-    pageSize: 10,
-    filter: 'latest',
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    filter,
   });
 
   const hasVotedPromise = hasVoted({
@@ -126,6 +128,8 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </div>
       <section className="my-5">
         <AllAnswers
+          page={Number(page) || 1}
+          isNext={answerResult?.isNext || false}
           data={answerResult?.answers}
           success={areAnswersLoaded}
           error={answersError}
