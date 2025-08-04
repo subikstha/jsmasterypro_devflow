@@ -95,6 +95,12 @@ export async function getUser(
 
     const totalQuestions = await Question.countDocuments({ author: userId });
     const totalAnswers = await Answer.countDocuments({ author: userId });
+    console.log(
+      'total questions and total answers are',
+      totalQuestions,
+      totalAnswers,
+      JSON.parse(JSON.stringify(user))
+    );
     return {
       success: true,
       data: {

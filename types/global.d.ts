@@ -82,4 +82,9 @@ interface Collection {
   question: Question;
 }
 
+interface BadgeCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
+}
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
