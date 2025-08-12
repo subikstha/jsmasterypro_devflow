@@ -1,6 +1,6 @@
 'use server';
 
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, PipelineStage, Types } from 'mongoose';
 
 import { Answer, Question, User } from '@/database';
 
@@ -10,6 +10,7 @@ import {
   GetUserQuestionsSchema,
   GetUsersAnswersSchema,
   GetUserSchema,
+  GetUsersTagsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
 
@@ -191,6 +192,59 @@ export async function getUsersAnswers(
         answers: JSON.parse(JSON.stringify(answers)),
         isNext,
       },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUserTopTags(
+  params: GetUserTagsParams
+): Promise<
+  ActionResponse<{ tags: { _id: string; name: string; count: number }[] }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetUsersTagsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId } = params;
+
+  try {
+    const pipeline: PipelineStage[] = [
+      { $match: { author: new Types.ObjectId(userId) } }, // get all the questions for which the author is this user
+      { $unwind: '$tags' },
+      { $group: { _id: '$tags', count: { $sum: 1 } } },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'tagInfo',
+        },
+      },
+      { $unwind: '$tagInfo' },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+      {
+        $project: {
+          _id: '$tagInfo._id',
+          name: '$tagInfo.name',
+          count: 1,
+        },
+      },
+    ];
+
+    const tags = await Question.aggregate(pipeline);
+    console.log('tags in server action ', tags);
+
+    return {
+      success: true,
+      data: { tags: JSON.parse(JSON.stringify(tags)) },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
