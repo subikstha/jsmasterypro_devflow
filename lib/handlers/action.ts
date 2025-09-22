@@ -39,6 +39,7 @@ async function action<T>({
   let session: Session | null = null;
   if (authorize) {
     session = await auth();
+    // console.log('session in action util', session);
 
     if (!session) {
       return new UnauthorizedError();
