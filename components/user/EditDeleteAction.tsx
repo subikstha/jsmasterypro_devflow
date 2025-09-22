@@ -28,14 +28,17 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   };
   const handleDelete = async () => {
     if (type === 'Question') {
-      const { status } = await deleteQuestion({ questionId: itemId });
+      await deleteQuestion({ questionId: itemId });
       toast({
         title: 'Question Deleted',
+        variant: 'destructive',
         description: 'Your question has been deleted successfully.',
       });
     } else if (type === 'Answer') {
+      // TODO: Implement answer delete functionality
       toast({
         title: 'Answer Deleted',
+        variant: 'destructive',
         description: 'Your answer has been deleted successfully',
       });
     }

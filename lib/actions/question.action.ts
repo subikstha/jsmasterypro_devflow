@@ -419,7 +419,7 @@ export async function deleteQuestion(
     // console.log('found saved collection', savedCollections);
     return { success: true };
   } catch (error) {
-    await session.abortTransaction();
+    await session.abortTransaction()
     session.endSession();
     return handleError(error) as ErrorResponse;
   }
