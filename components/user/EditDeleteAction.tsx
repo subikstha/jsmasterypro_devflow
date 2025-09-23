@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
+import { deleteAnswer } from '@/lib/actions/answer.action';
 import { deleteQuestion } from '@/lib/actions/question.action';
 
 interface Props {
@@ -36,6 +37,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
       });
     } else if (type === 'Answer') {
       // TODO: Implement answer delete functionality
+      await deleteAnswer({ answerId: itemId });
       toast({
         title: 'Answer Deleted',
         variant: 'destructive',

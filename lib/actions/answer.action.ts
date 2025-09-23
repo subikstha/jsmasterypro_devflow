@@ -1,16 +1,21 @@
 'use server';
 import { error } from 'console';
 
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 
 import ROUTES from '@/constants/routes';
-import { Question } from '@/database';
+import { Question, Vote } from '@/database';
 import Answer, { IAnswerDoc } from '@/database/answer.model';
 
 import action from '../handlers/action';
 import handleError from '../handlers/error';
-import { AnswerServerSchema, GetAnswersSchema } from '../validations';
+import { UnauthorizedError } from '../http-errors';
+import {
+  AnswerServerSchema,
+  DeleteAnswerSchema,
+  GetAnswersSchema,
+} from '../validations';
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -126,4 +131,58 @@ export async function getAnswers(
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
+}
+
+export async function deleteAnswer(
+  params: DeleteAnswerParams
+): Promise<ActionResponse<null>> {
+  const validationResult = await action({
+    params,
+    schema: DeleteAnswerSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { answerId } = validationResult.params!;
+  const { user } = validationResult.session!;
+
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+    const answer = await Answer.findById(answerId).session(session);
+    if (!answer) throw new Error('Answer not found');
+    if (!user) throw new Error('User not found');
+
+    if (answer.author.toString() !== user.id) {
+      throw new UnauthorizedError(
+        'You are not authorized to delete the answer'
+      );
+    }
+
+    // Reduce the question answer count
+    await Question.findByIdAndUpdate(
+      answer.question,
+      { $inc: { answers: -1 } },
+      { new: true }
+    );
+
+    // Delete votes associated with the answer
+    await Vote.deleteMany({ actionId: answerId, actionType: 'answer' });
+
+    // Delete the answer
+    await Answer.findByIdAndDelete(answerId);
+    await session.commitTransaction();
+    session.endSession();
+
+    revalidatePath(`/profile/${user?.id}`);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  }
+  return { success: true };
 }
