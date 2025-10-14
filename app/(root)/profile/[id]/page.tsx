@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import React from 'react';
+import React, { use } from 'react';
 
 import { auth } from '@/auth';
 import AnswerCard from '@/components/cards/AnswerCard';
@@ -128,6 +128,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
         totalQuestions={totalQuestions}
         totalAnswers={totalAnswers}
         badges={{ GOLD: 0, SILVER: 0, BRONZE: 0 }}
+        reputationPoints={user.reputation || 0}
       />
       <section className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-[2]">
