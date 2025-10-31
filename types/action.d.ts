@@ -107,3 +107,10 @@ interface CreateInteractionParams {
   authorId: string;
   actionTarget: 'question' | 'answer';
 }
+
+interface UpdateReputationParams {
+  interaction: IInteraction;
+  session: mongoose.ClientSession;
+  performerId: string;
+  authorId: string;
+}

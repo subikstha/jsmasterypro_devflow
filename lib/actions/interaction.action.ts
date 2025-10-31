@@ -24,7 +24,7 @@ export async function createInteraction(
     actionId,
     actionTarget,
     authorId,
-  } = validationResult.params;
+  } = validationResult.params!;
 
   const userId = validationResult.session?.user?.id;
 
@@ -45,7 +45,12 @@ export async function createInteraction(
     );
 
     // TODO: Update reputation for both the performer and the content author
-
+    await updateReuptation({
+      interaction,
+      session,
+      performerId: userId!,
+      authorId,
+    });
     await session.commitTransaction();
     return { success: true, data: JSON.parse(JSON.stringify(interaction)) };
   } catch (error) {
@@ -53,5 +58,30 @@ export async function createInteraction(
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
+  }
+}
+
+export async function updateReuptation(params: UpdateReputationParams) {
+  const { interaction, session, performerId, authorId } = params;
+  const { action, actionType } = interaction;
+
+  let performerPoints = 0;
+  let authorPoints = 0;
+
+  switch (action) {
+    case 'upvote':
+      performerPoints = 2;
+      authorPoints = 10;
+      break;
+    case 'downvote':
+      performerPoints = -1;
+      authorPoints = -2;
+      break;
+    case 'post':
+      authorPoints = actionType === 'question' ? 5 : 10;
+      break;
+    case 'delete':
+      authorPoints = actionType === 'question' ? -5 : -10;
+      break;
   }
 }
