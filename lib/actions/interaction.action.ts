@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import { User } from '@/database';
 import Interaction, { IInteraction } from '@/database/interaction.model';
 
 import action from '../handlers/action';
@@ -84,4 +85,32 @@ export async function updateReuptation(params: UpdateReputationParams) {
       authorPoints = actionType === 'question' ? -5 : -10;
       break;
   }
+
+  if (performerId === authorId) {
+    await User.findByIdAndUpdate(
+      performerId,
+      {
+        $inc: { reputation: authorPoints },
+      },
+      { session }
+    );
+  }
+
+  await User.bulkWrite(
+    [
+      {
+        updateOne: {
+          filter: { _id: performerId },
+          update: { $inc: { reputation: performerPoints } },
+        },
+      },
+      {
+        updateOne: {
+          filter: { _id: authorId },
+          update: { $inc: { reputation: authorPoints } },
+        },
+      },
+    ],
+    { session }
+  );
 }
