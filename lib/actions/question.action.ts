@@ -2,6 +2,7 @@
 
 import mongoose, { FilterQuery } from 'mongoose';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 
 import { Answer, Vote } from '@/database';
 import Collection from '@/database/collection.model';
@@ -20,6 +21,7 @@ import {
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
+import { createInteraction } from './interaction.action';
 // import User from '@/database/user.model';
 
 export async function createQuestion(
@@ -77,8 +79,17 @@ export async function createQuestion(
       { session }
     );
 
-    await session.commitTransaction();
+    // Log the interaction
+    after(async () => {
+      await createInteraction({
+        action: 'post',
+        actionId: question._id.toString(),
+        authorId: userId as string,
+        actionTarget: 'question',
+      });
+    });
 
+    await session.commitTransaction();
     return {
       success: true,
       data: JSON.parse(JSON.stringify(question)),
@@ -419,7 +430,7 @@ export async function deleteQuestion(
     // console.log('found saved collection', savedCollections);
     return { success: true };
   } catch (error) {
-    await session.abortTransaction()
+    await session.abortTransaction();
     session.endSession();
     return handleError(error) as ErrorResponse;
   }

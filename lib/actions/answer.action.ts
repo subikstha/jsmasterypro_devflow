@@ -1,8 +1,8 @@
 'use server';
-import { error } from 'console';
 
 import mongoose, { Mongoose } from 'mongoose';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 
 import ROUTES from '@/constants/routes';
 import { Question, Vote } from '@/database';
@@ -16,6 +16,7 @@ import {
   DeleteAnswerSchema,
   GetAnswersSchema,
 } from '../validations';
+import { createInteraction } from './interaction.action';
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -59,6 +60,15 @@ export async function createAnswer(
 
     question.answers += 1;
     await question.save({ session });
+
+    after(async () => {
+      await createInteraction({
+        action: 'post',
+        actionId: newAnswer._id.toString(),
+        authorId: userId as string,
+        actionTarget: 'answer',
+      });
+    });
 
     await session.commitTransaction();
 

@@ -29,6 +29,6 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true } // To generate timestamps when the user was created
 );
 
-const User = models?.User || model<IUser>('User', UserSchema); //NOTE: <IUser> means that our document will be of the type IUser (In the frontend we will know exactly which properties of the user we will have access to)
+const User = models?.User || model<IUser>('User', UserSchema); // NOTE: <IUser> means that our document will be of the type IUser (In the frontend we will know exactly which properties of the user we will have access to)
 
 export default User;
