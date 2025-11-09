@@ -12,6 +12,7 @@ import { HomePageFilters } from '@/constants/filters';
 import ROUTES from '@/constants/routes';
 import { EMPTY_QUESTION } from '@/constants/states';
 import { getQuestions } from '@/lib/actions/question.action';
+import { getUserStats } from '@/lib/actions/user.action';
 
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
@@ -19,6 +20,9 @@ interface SearchParams {
 
 const Home = async ({ searchParams }: SearchParams) => {
   const session = await auth();
+  await getUserStats({
+    userId: session?.user?.id ?? '686e84a10b7a3947c62dabdb',
+  });
 
   const { page, pageSize, query, filter } = await searchParams;
 
@@ -28,8 +32,6 @@ const Home = async ({ searchParams }: SearchParams) => {
     query: query || '',
     filter: filter || '',
   });
-
-  console.log('Questions are', data, success, error);
 
   const { questions, isNext } = data || {};
   console.log('Session is', session);

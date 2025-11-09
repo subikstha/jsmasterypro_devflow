@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.1.9",
+    "ai": "4.3.0",
+    "@ai-sdk/openai": "1.2.2",
+    "@ai-sdk/groq": "2.0.27",
+    "@ai-sdk/google": "2.0.26",
+    "@ai-sdk/xai": "2.0.30",
     "@hookform/resolvers": "^3.10.0",
     "@mdxeditor/editor": "^3.21.4",
     "@radix-ui/react-alert-dialog": "^1.1.14",
@@ -23,7 +27,6 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-toast": "^1.2.5",
     "@typescript-eslint/eslint-plugin": "^8.22.0",
-    "ai": "^4.1.34",
     "bcryptjs": "^2.4.3",
     "bright": "^1.0.0",
     "class-variance-authority": "^0.7.1",
