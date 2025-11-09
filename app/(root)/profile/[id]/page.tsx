@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import React, { use } from 'react';
+import React from 'react';
 
 import { auth } from '@/auth';
 import AnswerCard from '@/components/cards/AnswerCard';
@@ -19,6 +19,7 @@ import {
   getUser,
   getUserQuestions,
   getUsersAnswers,
+  getUserStats,
   getUserTopTags,
 } from '@/lib/actions/user.action';
 
@@ -37,6 +38,8 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       </div>
     );
   const { user, totalQuestions, totalAnswers } = data!;
+
+  const { data: userStatus } = await getUserStats({ userId: user._id });
 
   const {
     success: userQuestionsSuccess,
@@ -125,9 +128,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
         </div>
       </section>
       <Stats
-        totalQuestions={totalQuestions}
-        totalAnswers={totalAnswers}
-        badges={{ GOLD: 0, SILVER: 0, BRONZE: 0 }}
+        totalQuestions={userStatus?.totalQuestions ?? 0}
+        totalAnswers={userStatus?.totalAnswers ?? 0}
+        badges={userStatus?.badges ?? { GOLD: 0, SILVER: 0, BRONZE: 0 }}
         reputationPoints={user.reputation || 0}
       />
       <section className="mt-10 flex gap-10">
