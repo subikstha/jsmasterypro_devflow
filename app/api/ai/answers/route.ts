@@ -1,4 +1,4 @@
-import { groq } from '@ai-sdk/groq';
+import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextResponse } from 'next/server';
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     }
 
     const { text } = await generateText({
-      model: groq('llama3-8b-8192'),
+      model: google('gemini-2.0-flash'),
       prompt: `Generate a markdown-formatted response to the following question: "${question}".
 
       Consider the provided context:

@@ -23,11 +23,11 @@ const Votes = ({
   hasVotedPromise,
 }: Props) => {
   const session = useSession();
-  console.log(
-    'This is the session from the vote component',
-    session,
-    session.data?.user?.id
-  );
+  // console.log(
+  //   'This is the session from the vote component',
+  //   session,
+  //   session.data?.user?.id
+  // );
   const userId = session.data?.user?.id;
 
   const { success, data } = use(hasVotedPromise);

@@ -23,8 +23,6 @@ const Collection = async ({ searchParams }: SearchParams) => {
     filter: filter || '',
   });
 
-  console.log('Questions are', data, success, error);
-
   const { collection, isNext } = data || {};
 
   console.log('Collection is', collection);

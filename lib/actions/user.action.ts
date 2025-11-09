@@ -6,6 +6,7 @@ import { Answer, Question, User } from '@/database';
 
 import action from '../handlers/action';
 import handleError from '../handlers/error';
+import { assignBadges } from '../utils';
 import {
   GetUserQuestionsSchema,
   GetUsersAnswersSchema,
@@ -251,4 +252,71 @@ export async function getUserTopTags(
   }
 }
 
+export async function getUserStats(params: GetUserParams): Promise<
+  ActionResponse<{
+    totalQuestions: number;
+    totalAnswers: number;
+    badges: BadgeCounts;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetUserSchema,
+  });
 
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { userId } = params;
+  try {
+    const [questionStats] = await Question.aggregate([
+      { $match: { author: new Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          upvotes: { $sum: '$upvotes' },
+          views: { $sum: '$views' },
+        },
+      },
+    ]);
+
+    const [answerStats] = await Answer.aggregate([
+      { $match: { author: new Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          upvotes: { $sum: '$upvotes' },
+        },
+      },
+    ]);
+    console.log('Calling the assign badges function');
+    const badges = assignBadges({
+      criteria: [
+        {
+          type: 'QUESTION_COUNT',
+          count: questionStats ? questionStats.count : 0,
+        },
+        { type: 'ANSWER_COUNT', count: answerStats ? answerStats.count : 0 },
+        {
+          type: 'QUESTION_UPVOTES',
+          count: questionStats ? questionStats.upvotes : 0,
+        },
+        { type: 'TOTAL_VIEWS', count: questionStats ? questionStats.views : 0 },
+      ],
+    });
+
+    return {
+      success: true,
+      data: {
+        totalAnswers: questionStats ? questionStats.count : 0,
+        totalQuestions: answerStats ? answerStats.count : 0,
+        badges,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
