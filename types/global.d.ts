@@ -54,6 +54,10 @@ interface PaginatedSearchParams {
   sort?: string;
 }
 
+interface GetRecommendedQuestionsParams extends PaginatedSearchParams {
+  userId: string;
+}
+
 interface Answer {
   _id: string;
   author: Author;

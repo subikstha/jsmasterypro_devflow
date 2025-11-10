@@ -30,7 +30,6 @@ const Home = async ({ searchParams }: SearchParams) => {
   });
 
   const { questions, isNext } = data || {};
-  console.log('Session is', session);
 
   // const filteredQuestions = questions.filter((question) => {
   //   const matchesQuery = question.title
