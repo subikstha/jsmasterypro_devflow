@@ -1,10 +1,10 @@
 'use server';
 
-import mongoose, { FilterQuery } from 'mongoose';
+import mongoose, { FilterQuery, Types } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 import { after } from 'next/server';
 
-import { Answer, Vote } from '@/database';
+import { Answer, Interaction, Vote } from '@/database';
 import Collection from '@/database/collection.model';
 import Question, { IQuestionDoc } from '@/database/question.model';
 import TagQuestion from '@/database/tag-question.model';
@@ -18,6 +18,7 @@ import {
   DeleteQuestionSchema,
   EditQUestionSchema,
   GetQuestionSchema,
+  GetRecommendedQuestionsSchema,
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
@@ -231,6 +232,70 @@ export async function getQuestion(
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
+}
+
+// This server action will only be called when the filter is set to recommended
+export async function getRecommendedQuestions({
+  userId,
+  query,
+  skip,
+  limit,
+}: RecommendationParams) {
+  const interactions = await Interaction.find({
+    user: new Types.ObjectId(userId), // Converting userId string to a mongodb object ID to ensure it matches the database field type
+    actionType: 'question',
+    action: { $in: ['view', 'upvote', 'bookmark', 'post'] },
+  })
+    .sort({ createdAt: -1 })
+    .limit(50)
+    .lean(); // Lean transforms the object that is returned from the database to javascript friendly objects
+
+  // Find the interacted question id
+  const interactedQuestionId = interactions.map(
+    (interaction) => interaction.actionId
+  );
+
+  const interactedQuestions = await Question.find({
+    _id: { $in: interactedQuestionId },
+  }).select('tags');
+
+  // console.log('Interacted questions are', interactedQuestions);
+
+  const allTags = interactedQuestions.flatMap((q) =>
+    q.tags.map((tag: Types.ObjectId) => tag.toString())
+  );
+
+  const uniqueTagIds = [...new Set(allTags)];
+
+  const recommendedQuery: FilterQuery<typeof Question> = {
+    _id: { $nin: interactedQuestionId },
+    author: { $ne: new Types.ObjectId(userId) },
+    tags: { $in: uniqueTagIds.map((id) => new Types.ObjectId(id)) },
+  };
+
+  if (query) {
+    recommendedQuery.$or = [
+      { title: { $regex: query, $options: 'i' } },
+      { content: { $regex: query, $options: 'i' } },
+    ];
+  }
+
+  const total = await Question.countDocuments(recommendedQuery);
+
+  const questions = await Question.find(recommendedQuery)
+    .populate('tags', 'name')
+    .populate('author', 'name image')
+    .sort({ upvoted: -1, views: -1 })
+    .skip(skip)
+    .limit(limit)
+    .lean();
+
+  return {
+    questions: JSON.parse(JSON.stringify(questions)),
+    isNext: total > skip + questions.length,
+  };
+
+  // console.log('All tags are', allTags);
 }
 
 export async function getQuestions(

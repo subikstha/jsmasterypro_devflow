@@ -15,6 +15,7 @@ import ProfileLink from '@/components/user/ProfileLink';
 import Stats from '@/components/user/Stats';
 import UserAvatar from '@/components/UserAvatar';
 import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from '@/constants/states';
+import { getRecommendedQuestions } from '@/lib/actions/question.action';
 import {
   getUser,
   getUserQuestions,
@@ -40,6 +41,8 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { user, totalQuestions, totalAnswers } = data!;
 
   const { data: userStatus } = await getUserStats({ userId: user._id });
+
+  await getRecommendedQuestions({ userId: id, skip: 0, limit: 1000 });
 
   const {
     success: userQuestionsSuccess,
@@ -73,10 +76,10 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
 
   const { tags } = userTopTags!;
-  console.log('Tags in profile page', tags);
+  // console.log('Tags in profile page', tags);
 
   const { _id, name, image, portfolio, bio, username, createdAt } = user;
-  console.log('user is', user);
+  // console.log('user is', user);
   return (
     <>
       <section className="flex flex-col-reverse items-start justify-between sm:flex-row">

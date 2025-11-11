@@ -33,7 +33,6 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = async ({
   children,
 }) => {
   const session = await auth();
-  console.log('session in the layout is', session);
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

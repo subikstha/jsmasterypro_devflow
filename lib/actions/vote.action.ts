@@ -132,6 +132,7 @@ export async function createVote(
     }
 
     after(async () => {
+      console.log('Creating interaction');
       await createInteraction({
         authorId: contentAuthorId,
         actionId: targetId,

@@ -227,3 +227,7 @@ export const CreateInteractionSchema = z.object({
   actionId: z.string().min(1),
   authorId: z.string().min(1),
 });
+
+export const GetRecommendedQuestionsSchema = z.object({
+  userId: z.string().min(1, { message: 'User id is required' }),
+});

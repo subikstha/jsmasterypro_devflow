@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 import { User } from '@/database';
-import Interaction, { IInteraction } from '@/database/interaction.model';
+import Interaction, { IInteractionDoc } from '@/database/interaction.model';
 
 import action from '../handlers/action';
 import handleError from '../handlers/error';
@@ -9,7 +9,7 @@ import { CreateInteractionSchema } from '../validations';
 
 export async function createInteraction(
   params: CreateInteractionParams
-): Promise<ActionResponse<IInteraction>> {
+): Promise<ActionResponse<IInteractionDoc>> {
   const validationResult = await action({
     params,
     schema: CreateInteractionSchema,
@@ -43,6 +43,10 @@ export async function createInteraction(
         },
       ],
       { session }
+    );
+    console.log(
+      'Interaction created inside the interaction action',
+      interaction
     );
 
     // TODO: Update reputation for both the performer and the content author

@@ -102,12 +102,12 @@ export async function getUser(
 
     const totalQuestions = await Question.countDocuments({ author: userId });
     const totalAnswers = await Answer.countDocuments({ author: userId });
-    console.log(
-      'total questions and total answers are',
-      totalQuestions,
-      totalAnswers,
-      JSON.parse(JSON.stringify(user))
-    );
+    // console.log(
+    //   'total questions and total answers are',
+    //   totalQuestions,
+    //   totalAnswers,
+    //   JSON.parse(JSON.stringify(user))
+    // );
     return {
       success: true,
       data: {
@@ -241,7 +241,7 @@ export async function getUserTopTags(
     ];
 
     const tags = await Question.aggregate(pipeline);
-    console.log('tags in server action ', tags);
+    // console.log('tags in server action ', tags);
 
     return {
       success: true,
@@ -292,7 +292,7 @@ export async function getUserStats(params: GetUserParams): Promise<
         },
       },
     ]);
-    console.log('Calling the assign badges function');
+    // console.log('Calling the assign badges function');
     const badges = assignBadges({
       criteria: [
         {
