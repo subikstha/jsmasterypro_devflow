@@ -4,6 +4,7 @@ import mongoose, { FilterQuery, Types } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 import { after } from 'next/server';
 
+import { auth } from '@/auth';
 import { Answer, Interaction, Vote } from '@/database';
 import Collection from '@/database/collection.model';
 import Question, { IQuestionDoc } from '@/database/question.model';
@@ -18,7 +19,6 @@ import {
   DeleteQuestionSchema,
   EditQUestionSchema,
   GetQuestionSchema,
-  GetRecommendedQuestionsSchema,
   IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from '../validations';
@@ -285,7 +285,7 @@ export async function getRecommendedQuestions({
   const questions = await Question.find(recommendedQuery)
     .populate('tags', 'name')
     .populate('author', 'name image')
-    .sort({ upvoted: -1, views: -1 })
+    .sort({ upvotes: -1, views: -1 })
     .skip(skip)
     .limit(limit)
     .lean();
@@ -319,7 +319,20 @@ export async function getQuestions(
 
   // TODO: Recommended questions to be done later
   if (filter === 'recommended') {
-    return { success: true, data: { questions: [], isNext: false } };
+    const session = await auth();
+    const userId = session?.user?.id;
+    if (!userId)
+      return { success: true, data: { questions: [], isNext: false } };
+    const recommendedQuestions = await getRecommendedQuestions({
+      userId,
+      query,
+      skip,
+      limit,
+    });
+    return {
+      success: true,
+      data: recommendedQuestions,
+    };
   }
 
   if (query) {

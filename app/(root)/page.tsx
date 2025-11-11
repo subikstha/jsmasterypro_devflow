@@ -1,6 +1,5 @@
 import Link from 'next/link';
 
-import { auth } from '@/auth';
 import QuestionCard from '@/components/cards/QuestionCard';
 import DataRenderer from '@/components/DataRenderer';
 import CommonFilter from '@/components/filters/CommonFilter';
@@ -18,8 +17,6 @@ interface SearchParams {
 }
 
 const Home = async ({ searchParams }: SearchParams) => {
-  const session = await auth();
-
   const { page, pageSize, query, filter } = await searchParams;
 
   const { success, data, error } = await getQuestions({
