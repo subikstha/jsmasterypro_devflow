@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 import React from 'react';
@@ -16,7 +17,7 @@ const SocialAuthForm = () => {
     try {
       await signIn(provider, {
         redirectTo: ROUTES.HOME,
-        redirect: false,
+        redirect: true, // TODO: When using redirect false, it was not working
       });
     } catch (error) {
       console.log(error);
