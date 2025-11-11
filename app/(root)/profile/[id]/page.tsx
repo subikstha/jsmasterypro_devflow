@@ -15,7 +15,6 @@ import ProfileLink from '@/components/user/ProfileLink';
 import Stats from '@/components/user/Stats';
 import UserAvatar from '@/components/UserAvatar';
 import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from '@/constants/states';
-import { getRecommendedQuestions } from '@/lib/actions/question.action';
 import {
   getUser,
   getUserQuestions,
@@ -41,8 +40,6 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { user, totalQuestions, totalAnswers } = data!;
 
   const { data: userStatus } = await getUserStats({ userId: user._id });
-
-  await getRecommendedQuestions({ userId: id, skip: 0, limit: 1000 });
 
   const {
     success: userQuestionsSuccess,
