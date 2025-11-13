@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import React from 'react';
 
 import UserCard from '@/components/cards/UserCard';
@@ -9,6 +10,11 @@ import { UserFilters } from '@/constants/filters';
 import ROUTES from '@/constants/routes';
 import { EMPTY_USERS } from '@/constants/states';
 import { getUsers } from '@/lib/actions/user.action';
+
+export const metadata: Metadata = {
+  title: 'DevFlow Community Page',
+  description: 'DevFlow Community Page where you will find great developers',
+};
 
 const Community = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
