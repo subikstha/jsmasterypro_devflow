@@ -6,6 +6,8 @@ import { fetchHandler } from './handlers/fetch';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
+const DNS_API_URL = process.env.IP_DNS_API_URL;
+const LOCATION_API_URL = process.env.IP_LOCATION_API_URL;
 
 export const api = {
   auth: {
@@ -74,6 +76,12 @@ export const api = {
       fetchHandler(`${API_BASE_URL}/ai/answers`, {
         method: 'POST',
         body: JSON.stringify({ question, content, userAnswer }),
+      }),
+  },
+  location: {
+    getDnsInfo: () =>
+      fetchHandler(`${DNS_API_URL}`, {
+        method: 'GET',
       }),
   },
 };
