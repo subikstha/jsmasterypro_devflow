@@ -93,4 +93,27 @@ interface BadgeCounts {
   BRONZE: number;
 }
 
+interface DNSData {
+  [key: string]: {
+    ip: string;
+    geo: string;
+  };
+}
+
+interface LocationData {
+  query: string;
+  status: string;
+  country: string;
+  countryCode: string;
+  retion: string;
+  regionName: string;
+  city: string;
+  zip: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+  isp: string;
+  org: string;
+  as: string;
+}
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
