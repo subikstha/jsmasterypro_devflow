@@ -1,7 +1,7 @@
 'use client';
 import { ChevronDown } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { formUrlQuery } from '@/lib/url';
 
@@ -20,17 +20,31 @@ interface Props {
   triggerClasses?: string;
   countries: CountriesData;
   popoverTriggerClasses?: string;
+  defaultCountryCode: string | undefined;
 }
 
 const JobsCountriesFilter = ({
   triggerClasses,
   countries,
   popoverTriggerClasses,
+  defaultCountryCode,
 }: Props) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(defaultCountryCode ?? '');
+
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    if (defaultCountryCode) {
+      const newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: 'country',
+        value: defaultCountryCode,
+      });
+      router.push(newUrl, { scroll: false });
+    }
+  }, [defaultCountryCode, searchParams, router]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
