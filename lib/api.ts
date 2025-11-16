@@ -86,8 +86,9 @@ export const api = {
         raw: true,
         method: 'GET',
       }),
-    getIpInfo: () =>
-      fetchHandler(`${LOCATION_API_URL}`, {
+    getIpInfo: (ipAddress: string) =>
+      fetchHandler<LocationData>(`${LOCATION_API_URL}${ipAddress}`, {
+        raw: true,
         method: 'GET',
       }),
   },

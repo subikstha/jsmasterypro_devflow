@@ -9,10 +9,11 @@ const FindJobs = async () => {
   // 1. First we get the IP address using the following api call
   const result = await api.location.getDnsInfo();
   const {
-    dns: { ip, geo },
+    dns: { ip },
   } = result || {};
-
-  // 2. Get all the countries to be displayed in the combobox
+  // 2. Second we get the country where the user is located
+  const { countryCode } = await api.location.getIpInfo(ip);
+  // 3. Get all the countries to be displayed in the combobox
   const countries = await api.countries.getAllCountries();
   return (
     <div>
@@ -30,6 +31,7 @@ const FindJobs = async () => {
             countries={countries}
             triggerClasses="w-full justify-start min-h-[56px] body-regular no-focus background-light800_dark300 text-dark500_light700 border px-5 py-2.5"
             popoverTriggerClasses="flex-1"
+            defaultCountryCode={countryCode}
           />
         </div>
         {/* <Button className="primary-gradient min-h-[56px]">Find Jobs</Button> */}
