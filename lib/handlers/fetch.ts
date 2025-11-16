@@ -1,5 +1,3 @@
-import { ActionResponse } from '@/types/global';
-
 import { RequestError } from '../http-errors';
 import logger from '../logger';
 import handleError from './error';
@@ -14,9 +12,10 @@ function isError(error: unknown): error is Error {
 
 export async function fetchHandler<T>(
   url: string,
-  options: FetchOptions = {}
-): Promise<ActionResponse<T>> {
+  options: FetchOptions & { raw?: boolean } = {}
+): Promise<T> {
   const {
+    raw = false,
     timeout = 100000,
     headers: customHeaders = {},
     ...restOptions
@@ -46,8 +45,8 @@ export async function fetchHandler<T>(
 
     if (!response.ok)
       throw new RequestError(response.status, `HTTP Error: ${response.status}`);
-
-    return await response.json();
+    const json = await response.json();
+    return (raw ? json : (json as ActionResponse<T>)) as T;
   } catch (err) {
     const error = isError(err) ? err : new Error('Unknown Error');
     if (error.name === 'AbortError') {
@@ -56,6 +55,6 @@ export async function fetchHandler<T>(
       logger.error(`Error fetching ${url}: ${error.message}`);
     }
 
-    return handleError(error) as ActionResponse<T>;
+    return handleError(error) as T;
   }
 }

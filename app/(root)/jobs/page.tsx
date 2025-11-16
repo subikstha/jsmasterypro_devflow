@@ -1,9 +1,50 @@
-import React from 'react'
+import React from 'react';
 
-const FindJobs = () => {
+import CommonFilter from '@/components/filters/CommonFilter';
+import JobsCountriesFilter from '@/components/filters/JobsCountriesFilter';
+import LocalSearch from '@/components/search/LocalSearch';
+import { JobsLocationFilters } from '@/constants/filters';
+import ROUTES from '@/constants/routes';
+import { api } from '@/lib/api';
+
+const FindJobs = async () => {
+  // 1. First we get the IP address using the following api call
+  const result = await api.location.getDnsInfo();
+  const {
+    dns: { ip, geo },
+  } = result || {};
+
+  // 2. Get all the countries to be displayed in the combobox
+  const countries = await api.countries.getAllCountries();
+  console.log('all countries', countries);
   return (
-    <div>FindJobs</div>
-  )
-}
+    <div>
+      <h1 className="h1-bold text-dark100_light900">Jobs</h1>
+      <div className="mt-11 flex gap-5">
+        <div className=" flex flex-1 items-center gap-5">
+          <LocalSearch
+            route={ROUTES.JOBS}
+            imgSrc="/icons/search.svg"
+            iconPosition="left"
+            placeholder="Job Title, Company or Keywords"
+            otherClasses="flex-1"
+          />
+          {/* <CommonFilter
+            filters={JobsLocationFilters}
+            containerClasses="flex-1"
+            selectValue="Select Location"
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+          /> */}
+          <JobsCountriesFilter
+            countries={countries}
+            triggerClasses="w-full min-h-[56px] body-regular no-focus background-light800_dark300 text-dark500_light700 border px-5 py-2.5"
+            popoverTriggerClasses="flex-1"
+          />
+        </div>
+        {/* <Button className="primary-gradient min-h-[56px]">Find Jobs</Button> */}
+      </div>
+    </div>
+  );
+};
 
-export default FindJobs
+export default FindJobs;

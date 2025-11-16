@@ -21,12 +21,14 @@ interface Props {
   }[];
   otherClasses?: string;
   containerClasses?: string;
+  selectValue?: string;
 }
 
 const CommonFilter = ({
   filters,
   otherClasses = '',
   containerClasses = '',
+  selectValue,
 }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,7 +59,7 @@ const CommonFilter = ({
           aria-label="Filter options" // Accesibility so that screen readers can read it
         >
           <div className="line-clamp-1 flex-1 text-left">
-            <SelectValue placeholder="Select a filter" />
+            <SelectValue placeholder={selectValue ?? 'Select a filter'} />
           </div>
         </SelectTrigger>
         <SelectContent>

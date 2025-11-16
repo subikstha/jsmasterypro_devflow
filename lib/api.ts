@@ -6,6 +6,10 @@ import { fetchHandler } from './handlers/fetch';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
+const DNS_API_URL = process.env.IP_DNS_API_URL;
+const LOCATION_API_URL = process.env.IP_LOCATION_API_URL;
+const JOBS_API_URL = process.env.JOB_SEARCH_API_URL;
+const COUNTRIES_API_URL = process.env.COUNTRIES_API_URL;
 
 export const api = {
   auth: {
@@ -75,5 +79,45 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ question, content, userAnswer }),
       }),
+  },
+  location: {
+    getDnsInfo: () =>
+      fetchHandler<DNSData>(`${DNS_API_URL}`, {
+        raw: true,
+        method: 'GET',
+      }),
+    getIpInfo: () =>
+      fetchHandler(`${LOCATION_API_URL}`, {
+        method: 'GET',
+      }),
+  },
+  countries: {
+    getAllCountries: () =>
+      fetchHandler<CountriesData>(
+        `${COUNTRIES_API_URL}independent?status=true`,
+        {
+          method: 'GET',
+          raw: true,
+        }
+      ),
+  },
+  jobs: {
+    getJobsByLocation: (
+      country: string,
+      query: string,
+      page: number,
+      numPages: number,
+      datePosted: 'all' | 'today' | '3days' | 'week' | 'month'
+    ) =>
+      fetchHandler(
+        `${JOBS_API_URL}/search?query=${query}&page=${page}&num_pages=${numPages}&country=${country}&date_posted=${datePosted}`,
+        {
+          method: 'GET',
+          headers: {
+            'x-rapidapi-key': `${process.env.RAPID_API_KEY}`,
+            'x-rapidapi-host': 'jsearch.p.rapidapi.com',
+          },
+        }
+      ),
   },
 };

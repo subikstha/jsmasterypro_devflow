@@ -32,6 +32,11 @@ export const UserFilters = [
   { name: 'Popular', value: 'popular' },
 ];
 
+export const JobsLocationFilters = [
+  { name: 'Nepal', value: 'np' },
+  { name: 'India', value: 'in' },
+];
+
 export const BADGE_CRITERIA = {
   QUESTION_COUNT: {
     BRONZE: 10,
