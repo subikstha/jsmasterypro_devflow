@@ -9,6 +9,7 @@ const API_BASE_URL =
 const DNS_API_URL = process.env.IP_DNS_API_URL;
 const LOCATION_API_URL = process.env.IP_LOCATION_API_URL;
 const JOBS_API_URL = process.env.JOB_SEARCH_API_URL;
+const COUNTRIES_API_URL = process.env.COUNTRIES_API_URL;
 
 export const api = {
   auth: {
@@ -81,13 +82,24 @@ export const api = {
   },
   location: {
     getDnsInfo: () =>
-      fetchHandler(`${DNS_API_URL}`, {
+      fetchHandler<DNSData>(`${DNS_API_URL}`, {
+        raw: true,
         method: 'GET',
       }),
     getIpInfo: () =>
       fetchHandler(`${LOCATION_API_URL}`, {
         method: 'GET',
       }),
+  },
+  countries: {
+    getAllCountries: () =>
+      fetchHandler<CountriesData>(
+        `${COUNTRIES_API_URL}independent?status=true`,
+        {
+          method: 'GET',
+          raw: true,
+        }
+      ),
   },
   jobs: {
     getJobsByLocation: (

@@ -94,7 +94,7 @@ interface BadgeCounts {
 }
 
 interface DNSData {
-  [key: string]: {
+  dns: {
     ip: string;
     geo: string;
   };
@@ -116,4 +116,28 @@ interface LocationData {
   org: string;
   as: string;
 }
+
+type CountriesData = {
+  name: {
+    common: string;
+    nativeName: {
+      ara: {
+        official: string;
+        common: string;
+      };
+    };
+    official: string;
+  };
+  altSpellings: string[];
+  area: number;
+  borders: string[];
+  capital: string[];
+  capitalInfo: {
+    latlng: number[];
+  };
+  cca2: string;
+  cca3: string;
+  ccn3: string;
+  cioc: string;
+}[];
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
