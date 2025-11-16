@@ -1,6 +1,9 @@
 'use client';
 import { ChevronDown } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+
+import { formUrlQuery } from '@/lib/url';
 
 import { Button } from '../ui/button';
 import {
@@ -26,13 +29,15 @@ const JobsCountriesFilter = ({
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className={popoverTriggerClasses}>
         <Button className={triggerClasses} role="combobox" aria-expanded={open}>
           {countries.find((country) => country.cca2 === value)?.name.common ??
-            'Select Country'}
+            'Select Location'}
           <ChevronDown />
         </Button>
       </PopoverTrigger>
@@ -42,8 +47,7 @@ const JobsCountriesFilter = ({
           <CommandList>
             <CommandEmpty>No Countries Found</CommandEmpty>
             <CommandGroup>
-              {countries.map((country, index) => {
-                console.log('index country loop', index);
+              {countries.map((country) => {
                 return (
                   <CommandItem
                     key={country.cca2}
@@ -52,7 +56,15 @@ const JobsCountriesFilter = ({
                       const selected = countries.find(
                         (c) => c.name.common === currentValue
                       );
-                      if (selected) setValue(selected.cca2);
+                      if (selected) {
+                        setValue(selected.cca2);
+                        const newUrl = formUrlQuery({
+                          params: searchParams.toString(),
+                          key: 'country',
+                          value: selected.cca2,
+                        });
+                        router.push(newUrl, { scroll: false });
+                      }
                       setOpen(false);
                     }}
                   >

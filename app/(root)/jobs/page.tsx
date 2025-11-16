@@ -1,9 +1,7 @@
 import React from 'react';
 
-import CommonFilter from '@/components/filters/CommonFilter';
 import JobsCountriesFilter from '@/components/filters/JobsCountriesFilter';
 import LocalSearch from '@/components/search/LocalSearch';
-import { JobsLocationFilters } from '@/constants/filters';
 import ROUTES from '@/constants/routes';
 import { api } from '@/lib/api';
 
@@ -16,7 +14,6 @@ const FindJobs = async () => {
 
   // 2. Get all the countries to be displayed in the combobox
   const countries = await api.countries.getAllCountries();
-  console.log('all countries', countries);
   return (
     <div>
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>
@@ -29,15 +26,9 @@ const FindJobs = async () => {
             placeholder="Job Title, Company or Keywords"
             otherClasses="flex-1"
           />
-          {/* <CommonFilter
-            filters={JobsLocationFilters}
-            containerClasses="flex-1"
-            selectValue="Select Location"
-            otherClasses="min-h-[56px] sm:min-w-[170px]"
-          /> */}
           <JobsCountriesFilter
             countries={countries}
-            triggerClasses="w-full min-h-[56px] body-regular no-focus background-light800_dark300 text-dark500_light700 border px-5 py-2.5"
+            triggerClasses="w-full justify-start min-h-[56px] body-regular no-focus background-light800_dark300 text-dark500_light700 border px-5 py-2.5"
             popoverTriggerClasses="flex-1"
           />
         </div>
