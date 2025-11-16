@@ -140,4 +140,55 @@ type CountriesData = {
   ccn3: string;
   cioc: string;
 }[];
+
+interface JobSearchData {
+  status: string;
+  request_id: string;
+  parameters: {
+    country: string;
+    date_posted: string;
+    language: string;
+    num_pages: number;
+    page: number;
+    query: string;
+  };
+  data: {
+    apply_options: {
+      publisher: string;
+      apply_link: string;
+      is_direct: boolean;
+    };
+    employer_logo: string | null;
+    employer_name: string | null;
+    employer_website: string | null;
+    job_apply_is_direct: true;
+    job_apply_link: string | null;
+    job_benefits: null;
+    job_city: string;
+    job_country: string;
+    job_description: string | null;
+    job_employment_type: string[];
+    job_google_link: string | null;
+    job_highlights: {
+      Qualifications: string[];
+      Responsibilities: string[];
+    };
+    job_id: string;
+    job_title: string;
+    job_is_remote: boolean;
+    job_latitude: number;
+    job_longitude: number;
+    job_location: string;
+    job_max_salary: number | string | null;
+    job_min_salary: number | string | null;
+    job_onet_job_zone: string;
+    job_onet_soc: string;
+    job_posted_at_datetime_utc: string | null;
+    job_posted_at_timestamp: string | null;
+    job_publisher: string;
+    job_salary: number | string | null;
+    job_salary_period: string | number | null;
+    job_state: string;
+  };
+}
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports

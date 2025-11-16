@@ -106,12 +106,12 @@ export const api = {
     getJobsByLocation: (
       country: string,
       query: string,
-      page: number,
-      numPages: number,
-      datePosted: 'all' | 'today' | '3days' | 'week' | 'month'
+      page?: number,
+      numPages?: number,
+      datePosted?: 'all' | 'today' | '3days' | 'week' | 'month'
     ) =>
-      fetchHandler(
-        `${JOBS_API_URL}/search?query=${query}&page=${page}&num_pages=${numPages}&country=${country}&date_posted=${datePosted}`,
+      fetchHandler<JobSearchData>(
+        `${JOBS_API_URL}search?query=${query}&page=${page ?? 1}&num_pages=${numPages ?? 10}&country=${country}&date_posted=${datePosted ?? 'all'}`,
         {
           method: 'GET',
           headers: {
