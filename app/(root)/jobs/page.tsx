@@ -59,7 +59,12 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
         render={(jobsData) => (
           <div className="mt-10 flex flex-col gap-6">
             {jobsData.map((job) => (
-              <JobsCard key={job.job_title} />
+              <JobsCard
+                key={job.job_title}
+                title={job.job_title}
+                employer={job.employer_name}
+                employerLogo={job.employer_logo}
+              />
             ))}
           </div>
         )}
