@@ -10,6 +10,11 @@ export const DEFAULT_EMPTY = {
   },
 };
 
+export const JOBS_EMPTY = {
+  title: 'No Jobs Found',
+  message: 'Try changing the search query or location to find some jobs',
+};
+
 export const DEFAULT_ERROR = {
   title: 'Something Went Wrong',
   message: 'Even our code can have a bad day. Give it another shot.',

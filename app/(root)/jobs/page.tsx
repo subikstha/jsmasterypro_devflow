@@ -1,8 +1,11 @@
 import React from 'react';
 
+import JobsCard from '@/components/cards/JobsCard';
+import DataRenderer from '@/components/DataRenderer';
 import JobsCountriesFilter from '@/components/filters/JobsCountriesFilter';
 import LocalSearch from '@/components/search/LocalSearch';
 import ROUTES from '@/constants/routes';
+import { JOBS_EMPTY } from '@/constants/states';
 import { api } from '@/lib/api';
 
 const FindJobs = async ({ searchParams }: RouteParams) => {
@@ -20,8 +23,12 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
   const countries = await api.countries.getAllCountries();
 
   // 4. Call the Jobsearch API based on the search parameters
-  const jobSearchResult = await api.jobs.getJobsByLocation('US', 'frontend');
-  console.log('job search result', jobSearchResult);
+  const { status, data: jobsData } = await api.jobs.getJobsByLocation(
+    'US',
+    query
+  );
+
+  console.log('Jobs data in the page', jobsData);
 
   return (
     <div>
@@ -44,6 +51,19 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
         </div>
         {/* <Button className="primary-gradient min-h-[56px]">Find Jobs</Button> */}
       </div>
+      {/* List of jobs here */}
+      <DataRenderer
+        success={status === 'OK'}
+        empty={JOBS_EMPTY}
+        data={jobsData}
+        render={(jobsData) => (
+          <div className="mt-10 flex flex-col gap-6">
+            {jobsData.map((job) => (
+              <JobsCard key={job.job_title} />
+            ))}
+          </div>
+        )}
+      />
     </div>
   );
 };

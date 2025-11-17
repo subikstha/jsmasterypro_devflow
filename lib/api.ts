@@ -111,7 +111,7 @@ export const api = {
       datePosted?: 'all' | 'today' | '3days' | 'week' | 'month'
     ) =>
       fetchHandler<JobSearchData>(
-        `${JOBS_API_URL}search?query=${query}&page=${page ?? 1}&num_pages=${numPages ?? 10}&country=${country}&date_posted=${datePosted ?? 'all'}`,
+        `${JOBS_API_URL}search?query=${query}&page=${page ?? 1}&num_pages=${numPages ?? 1}&country=${country}&date_posted=${datePosted ?? 'all'}`,
         {
           method: 'GET',
           headers: {
