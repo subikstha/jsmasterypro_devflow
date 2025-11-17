@@ -146,7 +146,7 @@ interface JobSearchData {
   request_id: string;
   parameters: {
     country: string;
-    date_posted: string;
+    date_posted: 'all' | 'today' | '3days' | 'week' | 'month';
     language: string;
     num_pages: number;
     page: number;
@@ -189,6 +189,6 @@ interface JobSearchData {
     job_salary: number | string | null;
     job_salary_period: string | number | null;
     job_state: string;
-  };
+  }[];
 }
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
