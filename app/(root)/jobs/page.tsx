@@ -64,6 +64,9 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
                 title={job.job_title}
                 employer={job.employer_name}
                 employerLogo={job.employer_logo}
+                description={job.job_description}
+                country={job.job_country}
+                city={job.job_city}
               />
             ))}
           </div>
