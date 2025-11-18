@@ -24,7 +24,7 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
 
   // 4. Call the Jobsearch API based on the search parameters
   const { status, data: jobsData } = await api.jobs.getJobsByLocation(
-    'US',
+    country,
     query
   );
 
@@ -67,6 +67,10 @@ const FindJobs = async ({ searchParams }: RouteParams) => {
                 description={job.job_description}
                 country={job.job_country}
                 city={job.job_city}
+                employmentType={job.job_employment_type}
+                minSalary={job.job_min_salary}
+                maxSalary={job.job_max_salary}
+                link={job.job_apply_link}
               />
             ))}
           </div>
