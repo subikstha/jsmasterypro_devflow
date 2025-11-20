@@ -234,5 +234,5 @@ export const GetRecommendedQuestionsSchema = z.object({
 
 export const GlobalSearchSchema = z.object({
   query: z.string().min(1, { message: 'query string is required' }),
-  type: z.string().optional(),
+  type: z.string().nullable().optional(),
 });
