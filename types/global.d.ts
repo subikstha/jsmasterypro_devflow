@@ -167,7 +167,8 @@ interface JobSearchData {
     job_city: string;
     job_country: string;
     job_description: string | null;
-    job_employment_type: string[];
+    job_employment_type: string;
+    job_employment_types: string[];
     job_google_link: string | null;
     job_highlights: {
       Qualifications: string[];
