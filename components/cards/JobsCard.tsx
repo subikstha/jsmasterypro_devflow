@@ -83,7 +83,11 @@ const JobsCard = ({
             )}
           </div>
           {link && (
-            <Link href={link} className="primary-text-gradient flex gap-2">
+            <Link
+              href={link}
+              className="primary-text-gradient flex gap-2"
+              target="_blank"
+            >
               Apply Now
               <Image
                 src="/icons/arrow-up-right.svg"
