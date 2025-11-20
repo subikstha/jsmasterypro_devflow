@@ -192,4 +192,10 @@ interface JobSearchData {
     job_state: string;
   }[];
 }
+
+interface GlobalSearchedItem {
+  id: string;
+  type: 'question' | 'answer' | 'user' | 'tag';
+  title: string;
+}
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports

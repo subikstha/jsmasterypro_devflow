@@ -231,3 +231,8 @@ export const CreateInteractionSchema = z.object({
 export const GetRecommendedQuestionsSchema = z.object({
   userId: z.string().min(1, { message: 'User id is required' }),
 });
+
+export const GlobalSearchSchema = z.object({
+  query: z.string().min(1, { message: 'query string is required' }),
+  type: z.string().optional(),
+});
