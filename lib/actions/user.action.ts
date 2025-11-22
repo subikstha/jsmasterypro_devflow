@@ -320,3 +320,5 @@ export async function getUserStats(params: GetUserParams): Promise<
     return handleError(error) as ErrorResponse;
   }
 }
+
+export async function updateUser(params) {}

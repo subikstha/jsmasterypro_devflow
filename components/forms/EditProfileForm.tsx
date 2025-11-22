@@ -6,6 +6,7 @@ import z from 'zod';
 
 import { EditProfileSchema } from '@/lib/validations';
 
+import { Button } from '../ui/button';
 import {
   Form,
   FormControl,
@@ -15,20 +16,22 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
+import { Textarea } from '../ui/textarea';
 
 interface Props {
-  name: string | undefined;
-  username: string | undefined;
+  user: User;
 }
 
-const EditProfileForm = ({ name, username }: Props) => {
+const EditProfileForm = ({ user }: Props) => {
+  const { name, username, bio, portfolio, location } = user;
   const form = useForm<z.infer<typeof EditProfileSchema>>({
     resolver: zodResolver(EditProfileSchema),
     defaultValues: {
       username,
       name,
-      bio: '',
-      portfolioLink: '',
+      bio: bio ?? '',
+      portfolioLink: portfolio ?? '',
+      location: location ?? '',
     },
   });
 
@@ -51,6 +54,7 @@ const EditProfileForm = ({ name, username }: Props) => {
                   <Input
                     className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
                     {...field}
+                    placeholder="Your Full Name"
                   />
                 </FormControl>
                 <FormMessage />
@@ -69,6 +73,7 @@ const EditProfileForm = ({ name, username }: Props) => {
                   <Input
                     className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
                     {...field}
+                    placeholder="Your Username"
                   />
                 </FormControl>
                 <FormMessage />
@@ -85,14 +90,59 @@ const EditProfileForm = ({ name, username }: Props) => {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border placeholder:text-neutral-200"
                     {...field}
+                    placeholder="http://www.yourportfoliolink.com"
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="location"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Location <span className="text-primary-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[56px] border"
+                    {...field}
+                    placeholder="location"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem className="flex w-full flex-col">
+                <FormLabel className="paragraph-semibold text-dark400_light800">
+                  Bio
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="paragraph-regular background-light700_dark300 light-border-2 text-dark300_light700 no-focus min-h-[120px] border"
+                    {...field}
+                    placeholder="Tell something about yourself..."
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button
+            type="submit"
+            className="primary-gradient w-fit !text-light-900"
+          >
+            Submit
+          </Button>
         </div>
       </form>
     </Form>
