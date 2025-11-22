@@ -236,3 +236,11 @@ export const GlobalSearchSchema = z.object({
   query: z.string().min(1, { message: 'query string is required' }),
   type: z.string().nullable().optional(),
 });
+
+export const EditProfileSchema = z.object({
+  name: z.string().min(1, { message: 'User name is required' }),
+  username: z.string().min(1, { message: 'User name is required' }),
+  portfolioLink: z.string().url().optional(),
+  location: z.string().min(1, { message: 'Location is required' }),
+  bio: z.string().optional(),
+});

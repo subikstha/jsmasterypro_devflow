@@ -198,4 +198,12 @@ interface GlobalSearchedItem {
   type: 'question' | 'answer' | 'user' | 'tag';
   title: string;
 }
+
+interface UpdateUserParams {
+  name: string;
+  username: string;
+  portfolioLink?: string;
+  location: string;
+  bio?: string;
+}
 // NOTE: There was an import ReactNode at the top of this file which was messing up the global type imports
