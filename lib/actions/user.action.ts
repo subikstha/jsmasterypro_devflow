@@ -8,6 +8,7 @@ import action from '../handlers/action';
 import handleError from '../handlers/error';
 import { assignBadges } from '../utils';
 import {
+  EditProfileSchema,
   GetUserQuestionsSchema,
   GetUsersAnswersSchema,
   GetUserSchema,
@@ -321,4 +322,44 @@ export async function getUserStats(params: GetUserParams): Promise<
   }
 }
 
-export async function updateUser(params) {}
+export async function updateUser(
+  params: UpdateUserParams
+): Promise<ActionResponse<{ user: User }>> {
+  const validationResult = await action({
+    params,
+    schema: EditProfileSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { name, username, location, bio, portfolioLink } =
+    validationResult.params!;
+  const { user } = validationResult.session!;
+
+  if (!user) throw new Error('User not found');
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user.id },
+      {
+        $set: {
+          name,
+          username,
+          bio,
+          location,
+          portfolio: portfolioLink,
+        },
+      },
+      { new: true }
+    );
+
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(updatedUser)),
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}

@@ -241,23 +241,6 @@ export const EditProfileSchema = z.object({
   name: z.string().min(1, { message: 'User name is required' }),
   username: z.string().min(1, { message: 'User name is required' }),
   portfolioLink: z.string().url().optional(),
-  // .superRefine((value, ctx) => {
-  //   if (!value) return;
-  //   // Auto add https:// if missing
-  //   const normalized =
-  //     value.startsWith('http://') || value.startsWith('https://')
-  //       ? value
-  //       : `https://${value}`;
-  //   // validate the normalized value
-  //   try {
-  //     new URL(normalized);
-  //   } catch {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: 'Please enter a valid website URL',
-  //     });
-  //   }
-  // }),
   location: z.string().min(1, { message: 'Location is required' }),
   bio: z.string().optional(),
 });
