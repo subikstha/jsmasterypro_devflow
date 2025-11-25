@@ -240,7 +240,11 @@ export const GlobalSearchSchema = z.object({
 export const EditProfileSchema = z.object({
   name: z.string().min(1, { message: 'User name is required' }),
   username: z.string().min(1, { message: 'User name is required' }),
-  portfolioLink: z.string().url().optional(),
+  portfolio: z
+    .string()
+    .trim()
+    .transform((val) => (val === '' ? undefined : val))
+    .pipe(z.string().url().optional()),
   location: z.string().min(1, { message: 'Location is required' }),
   bio: z.string().optional(),
 });
