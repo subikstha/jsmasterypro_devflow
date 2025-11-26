@@ -202,7 +202,7 @@ interface GlobalSearchedItem {
 interface UpdateUserParams {
   name: string;
   username: string;
-  portfolioLink?: string;
+  portfolio: string | undefined;
   location: string;
   bio?: string;
 }

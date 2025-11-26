@@ -335,8 +335,7 @@ export async function updateUser(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { name, username, location, bio, portfolioLink } =
-    validationResult.params!;
+  const { name, username, location, bio, portfolio } = validationResult.params!;
   const { user } = validationResult.session!;
 
   if (!user) throw new Error('User not found');
@@ -349,7 +348,7 @@ export async function updateUser(
           username,
           bio,
           location,
-          portfolio: portfolioLink,
+          portfolio,
         },
       },
       { new: true }

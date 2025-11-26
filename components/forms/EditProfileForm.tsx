@@ -1,9 +1,13 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
+import ROUTES from '@/constants/routes';
+import { toast } from '@/hooks/use-toast';
+import { updateUser } from '@/lib/actions/user.action';
 import { EditProfileSchema } from '@/lib/validations';
 
 import { Button } from '../ui/button';
@@ -23,20 +27,51 @@ interface Props {
 }
 
 const EditProfileForm = ({ user }: Props) => {
+  const [isPending, startTransition] = useTransition();
   const { name, username, bio, portfolio, location } = user;
+  const router = useRouter();
   const form = useForm<z.infer<typeof EditProfileSchema>>({
     resolver: zodResolver(EditProfileSchema),
     defaultValues: {
       username,
       name,
       bio: bio ?? '',
-      portfolioLink: portfolio ?? '',
+      portfolio: portfolio ?? '',
       location: location ?? '',
     },
   });
 
   const handleSubmit = async (values: z.infer<typeof EditProfileSchema>) => {
     console.log('submitting edit profile form with', values);
+    const { name, username, location, bio, portfolio } = values;
+    startTransition(async () => {
+      try {
+        const { success, data: updatedUser } = await updateUser({
+          name,
+          username,
+          location,
+          bio,
+          portfolio,
+        });
+
+        console.log('success and updated user', success, updatedUser);
+
+        if (success) {
+          toast({
+            title: 'Success',
+            description: 'User updated successfully',
+          });
+          router.push(ROUTES.PROFILE(user._id));
+        }
+      } catch (error) {
+        console.error('error', error);
+        toast({
+          title: `Error`,
+          description: 'Something went wrong',
+          variant: 'destructive',
+        });
+      }
+    });
   };
   return (
     <Form {...form}>
@@ -82,7 +117,7 @@ const EditProfileForm = ({ user }: Props) => {
           />
           <FormField
             control={form.control}
-            name="portfolioLink"
+            name="portfolio"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
                 <FormLabel className="paragraph-semibold text-dark400_light800">
@@ -140,8 +175,9 @@ const EditProfileForm = ({ user }: Props) => {
           <Button
             type="submit"
             className="primary-gradient w-fit !text-light-900"
+            disabled={isPending}
           >
-            Submit
+            {isPending ? <>Submitting...</> : <>Submit</>}
           </Button>
         </div>
       </form>
