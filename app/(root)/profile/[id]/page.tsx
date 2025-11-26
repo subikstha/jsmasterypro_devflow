@@ -75,7 +75,8 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   const { tags } = userTopTags!;
   // console.log('Tags in profile page', tags);
 
-  const { _id, name, image, portfolio, bio, username, createdAt } = user;
+  const { _id, name, image, portfolio, bio, username, createdAt, location } =
+    user;
   // console.log('user is', user);
   return (
     <>
@@ -101,12 +102,11 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                   title="Portfolio"
                 />
               )}
-              {portfolio && (
-                <ProfileLink imgUrl="/icons/location.svg" title="Portfolio" />
+              {location && (
+                <ProfileLink imgUrl="/icons/location.svg" title={location} />
               )}
               <ProfileLink
                 imgUrl="/icons/calendar.svg"
-                href={portfolio}
                 title={dayjs(createdAt).format('MMMM YYYY')}
               />
             </div>

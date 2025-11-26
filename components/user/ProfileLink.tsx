@@ -17,7 +17,9 @@ const ProfileLink = ({ imgUrl, href, title }: Props) => {
           target="_blank"
           rel="noopener noreferrer"
           className="paragraph-medium text-link-100"
-        ></Link>
+        >
+          {title}
+        </Link>
       ) : (
         <p className="paragraph-medium text-dark400_light700">{title}</p>
       )}
