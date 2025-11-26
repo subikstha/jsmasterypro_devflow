@@ -5,7 +5,6 @@ import handleError from '@/lib/handlers/error';
 import { ValidationError } from '@/lib/http-errors';
 import dbConnect from '@/lib/mongoose';
 import { UserSchema } from '@/lib/validations';
-import { APIErrorResponse } from '@/types/global';
 
 export async function GET() {
   try {
@@ -37,9 +36,9 @@ export async function POST(request: Request) {
     const existingUsername = await User.findOne({ username });
     if (existingUsername) throw new Error('Username already exists');
 
-    const newUser = await User.create(validatedData.data)
+    const newUser = await User.create(validatedData.data);
 
-    return NextResponse.json({status: true, data: newUser}, {status: 201}) // Status code 201 means created
+    return NextResponse.json({ status: true, data: newUser }, { status: 201 }); // Status code 201 means created
   } catch (error) {
     handleError(error, 'api') as APIErrorResponse;
   }

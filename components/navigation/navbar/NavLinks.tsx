@@ -14,7 +14,7 @@ const NavLinks = ({
   userId,
 }: {
   isMobileNav?: boolean;
-  userId: string;
+  userId: string | undefined;
 }) => {
   const pathName = usePathname();
 

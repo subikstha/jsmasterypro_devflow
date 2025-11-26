@@ -23,7 +23,7 @@ const GlobalFilter = () => {
       newUrl = formUrlQuery({
         params: searchParams.toString(),
         key: 'type',
-        value: null,
+        value: '',
       });
 
       router.push(newUrl, { scroll: false });
