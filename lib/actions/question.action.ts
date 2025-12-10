@@ -521,3 +521,70 @@ export async function deleteQuestion(
 // 2. In Client Components: When used in form actions or event handlers, they are invoked via a POST request.
 // It is a direct invocation. When you use a server action in a server component, you are directly calling the function on the server.
 // There is no HTTP request involved at all because both the server component and the server actions are executing in the same server environment
+
+/*
+Script to delete question from mongodb
+// 1. SET THE ID OF THE QUESTION TO DELETE
+var qIdStr = 'YOUR_QUESTION_ID_HERE'; // <--- PASTE ID HERE
+var qId = ObjectId(qIdStr);
+
+// 2. FIND THE QUESTION (We need this to get the tags array)
+var question = db.questions.findOne({ _id: qId });
+
+if (!question) {
+    print("❌ Error: Question not found with ID: " + qIdStr);
+} else {
+    print("found question: " + question.title);
+    
+    // --- START CASCADING DELETE ---
+
+    // 3. Delete from 'Collection' (Saved items)
+    // Note: Check if your collection name is 'collections' or something else in Atlas
+    var delCollections = db.collections.deleteMany({ question: qId });
+    print("Deleted saved collections: " + delCollections.deletedCount);
+
+    // 4. Delete references in 'TagQuestion' (if you have a junction table)
+    // Note: Check your actual collection name. Mongoose often names it 'tagquestions'.
+    var delTagQuestions = db.tagquestions.deleteMany({ question: qId }); 
+    print("Deleted TagQuestion links: " + delTagQuestions.deletedCount);
+
+    // 5. Update Tags (Decrease count)
+    if (question.tags && question.tags.length > 0) {
+        var updateTags = db.tags.updateMany(
+            { _id: { $in: question.tags } },
+            { $inc: { questions: -1 } }
+        );
+        print("Updated tags counts: " + updateTags.modifiedCount);
+    }
+
+    // 6. Delete Question Votes
+    var delQVotes = db.votes.deleteMany({ 
+        actionId: qId, 
+        actionType: 'question' 
+    });
+    print("Deleted question votes: " + delQVotes.deletedCount);
+
+    // 7. Handle Answers (Find them first to get IDs, then delete votes, then delete answers)
+    var answers = db.answers.find({ question: qId }).toArray();
+    var answerIds = answers.map(function(a) { return a._id; });
+
+    if (answerIds.length > 0) {
+        // Delete votes for these answers
+        var delAVotes = db.votes.deleteMany({
+            actionId: { $in: answerIds },
+            actionType: 'answer'
+        });
+        print("Deleted answer votes: " + delAVotes.deletedCount);
+
+        // Delete the answers themselves
+        var delAnswers = db.answers.deleteMany({ question: qId });
+        print("Deleted answers: " + delAnswers.deletedCount);
+    } else {
+        print("No answers found for this question.");
+    }
+
+    // 8. FINALLY: Delete the Question itself
+    var delQuestion = db.questions.deleteOne({ _id: qId });
+    print("✅ Successfully deleted question: " + delQuestion.deletedCount);
+}
+*/
