@@ -525,7 +525,7 @@ export async function deleteQuestion(
 /*
 Script to delete question from mongodb
 // 1. SET THE ID OF THE QUESTION TO DELETE
-var qIdStr = 'YOUR_QUESTION_ID_HERE'; // <--- PASTE ID HERE
+var qIdStr = '692e755c34bea8e794e4ac6c'; // <--- PASTE ID HERE
 var qId = ObjectId(qIdStr);
 
 // 2. FIND THE QUESTION (We need this to get the tags array)
