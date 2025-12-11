@@ -3,10 +3,7 @@ import { z } from 'zod';
 import { InteractionActionEnums } from '@/database/interaction.model';
 
 export const SignInSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: 'Email is required' })
-    .email({ message: 'Please provide a valid email address' }),
+  email: z.email({ message: 'Please provide a valid email address' }),
 
   password: z
     .string()
@@ -31,10 +28,7 @@ export const SignUpSchema = z.object({
       message: 'Name can only contain letters and spaces.',
     }),
 
-  email: z
-    .string()
-    .min(1, { message: 'Email is required.' })
-    .email({ message: 'Please provide a valid email address.' }),
+  email: z.email({ message: 'Please provide a valid email address.' }),
 
   password: z
     .string()
@@ -74,14 +68,11 @@ export const UserSchema = z.object({
   username: z
     .string()
     .min(3, { message: 'Username must be at least 3 characters long' }),
-  email: z.string().email({ message: 'Please provide a valid email address' }),
+  email: z.email({ message: 'Please provide a valid email address' }),
   bio: z.string().optional(),
-  image: z.string().url({ message: 'Please provide a valid url' }).optional(),
+  image: z.url({ message: 'Please provide a valid url' }).optional(),
   location: z.string().optional(),
-  portfolio: z
-    .string()
-    .url({ message: 'Please provide a valid url' })
-    .optional(),
+  portfolio: z.url({ message: 'Please provide a valid url' }).optional(),
   reputation: z.number().optional(),
 });
 

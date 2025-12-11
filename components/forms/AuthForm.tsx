@@ -9,6 +9,7 @@ import {
   Path,
   SubmitHandler,
   useForm,
+  Resolver,
 } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 
@@ -26,7 +27,8 @@ import ROUTES from '@/constants/routes';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthFormProps<T extends FieldValues> {
-  schema: ZodType<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: ZodType<T, any, any>;
   defaultValues: T;
   onSubmit: (data: T) => Promise<ActionResponse>;
   formType: 'SIGN_IN' | 'SIGN_UP';
@@ -41,7 +43,7 @@ const AuthForm = <T extends FieldValues>({
   const router = useRouter();
   // 1. Define the form
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as unknown as Resolver<T>,
     defaultValues: defaultValues as DefaultValues<T>,
   });
 
@@ -91,7 +93,13 @@ const AuthForm = <T extends FieldValues>({
                 <FormControl>
                   <Input
                     required
-                    type={field.name === 'password' ? 'password' : 'text'}
+                    type={
+                      field.name === 'password'
+                        ? 'password'
+                        : field.name === 'email'
+                          ? 'email'
+                          : 'text'
+                    }
                     {...field}
                     className="paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 no-focus min-h-12 rounded-1.5 border"
                   />

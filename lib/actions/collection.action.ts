@@ -1,6 +1,6 @@
 'use server';
 
-import mongoose, { FilterQuery, PipelineStage } from 'mongoose';
+import mongoose, { PipelineStage } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 
 import ROUTES from '@/constants/routes';

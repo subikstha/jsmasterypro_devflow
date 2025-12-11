@@ -1,6 +1,6 @@
 'use server';
 
-import mongoose, { FilterQuery, Types } from 'mongoose';
+import mongoose, { QueryFilter, Types } from 'mongoose';
 import { revalidatePath } from 'next/cache';
 import { after } from 'next/server';
 import { cache } from 'react';
@@ -8,7 +8,7 @@ import { cache } from 'react';
 import { auth } from '@/auth';
 import { Answer, Interaction, Vote } from '@/database';
 import Collection from '@/database/collection.model';
-import Question, { IQuestionDoc } from '@/database/question.model';
+import Question from '@/database/question.model';
 import TagQuestion from '@/database/tag-question.model';
 import Tag, { ITagDoc } from '@/database/tag.model';
 
@@ -268,7 +268,7 @@ export async function getRecommendedQuestions({
 
   const uniqueTagIds = [...new Set(allTags)];
 
-  const recommendedQuery: FilterQuery<typeof Question> = {
+  const recommendedQuery: QueryFilter<typeof Question> = {
     _id: { $nin: interactedQuestionId },
     author: { $ne: new Types.ObjectId(userId) },
     tags: { $in: uniqueTagIds.map((id) => new Types.ObjectId(id)) },
@@ -316,7 +316,7 @@ export async function getQuestions(
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
-  const filterQuery: FilterQuery<typeof Question> = {};
+  const filterQuery: QueryFilter<typeof Question> = {};
 
   // TODO: Recommended questions to be done later
   if (filter === 'recommended') {

@@ -31,7 +31,8 @@ const EditProfileForm = ({ user }: Props) => {
   const { name, username, bio, portfolio, location } = user;
   const router = useRouter();
   const form = useForm<z.infer<typeof EditProfileSchema>>({
-    resolver: zodResolver(EditProfileSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(EditProfileSchema) as any,
     defaultValues: {
       username,
       name,
