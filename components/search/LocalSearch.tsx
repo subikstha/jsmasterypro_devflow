@@ -33,14 +33,15 @@ const LocalSearch = ({
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: 'query',
-          value: searchQuery,
-        });
-
-        router.push(newUrl, { scroll: false });
-      } else {
+        if ((searchParams.get('query') ?? '') !== searchQuery) {
+          const targetUrl = formUrlQuery({
+            params: searchParams.toString(),
+            key: 'query',
+            value: searchQuery,
+          });
+          router.replace(targetUrl, { scroll: false });
+        }
+      } else if (pathname === route && searchParams.has('query')) {
         console.log('pathname and route in the else block is', pathname, route);
         if (pathname === route) {
           const newUrl = removeKeysFromUrlQuery({

@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import QuestionCard from '@/components/cards/QuestionCard';
 import DataRenderer from '@/components/DataRenderer';
 import CommonFilter from '@/components/filters/CommonFilter';
@@ -6,7 +5,7 @@ import HomeFilter from '@/components/filters/HomeFilter';
 import Pagination from '@/components/Pagination';
 import LocalSearch from '@/components/search/LocalSearch';
 import { CollectionFilters } from '@/constants/filters';
-import { EMPTY_QUESTION } from '@/constants/states';
+import { EMPTY_COLLECTIONS } from '@/constants/states';
 import { getSavedQuestions } from '@/lib/actions/collection.action';
 
 interface SearchParams {
@@ -22,10 +21,10 @@ const Collection = async ({ searchParams }: SearchParams) => {
     query: query || '',
     filter: filter || '',
   });
+  console.log('success, data error', success, data, error);
 
   const { collection, isNext } = data || {};
 
-  console.log('Collection is', collection);
   return (
     <>
       <section className=" flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -48,7 +47,7 @@ const Collection = async ({ searchParams }: SearchParams) => {
         success={success}
         error={error}
         data={collection}
-        empty={EMPTY_QUESTION}
+        empty={EMPTY_COLLECTIONS}
         render={(collection) => (
           <div className="mt-10 flex w-full flex-col gap-6">
             {collection.map((item) => (

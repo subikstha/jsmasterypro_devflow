@@ -48,14 +48,16 @@ const GlobalSearch = ({ imgSrc, placeholder, otherClasses }: Props) => {
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchQuery) {
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: 'global',
-          value: searchQuery,
-        });
-        searchGlobally(searchQuery);
-        router.push(newUrl, { scroll: false });
-      } else {
+        if ((searchParams.get('global') ?? '') !== searchQuery) {
+          const newUrl = formUrlQuery({
+            params: searchParams.toString(),
+            key: 'global',
+            value: searchQuery,
+          });
+          searchGlobally(searchQuery);
+          router.push(newUrl, { scroll: false });
+        }
+      } else if (searchParams.has('global')) {
         const newUrl = removeKeysFromUrlQuery({
           params: searchParams.toString(),
           keysToRemove: ['global'],
